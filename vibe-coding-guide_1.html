@@ -1,0 +1,2971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vibe Coder's Field Manual — From Noob to Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1612;
+  --paper: #f5f1e8;
+  --cream: #ebe3d1;
+  --cream-dark: #d9cfb8;
+  --rust: #c5532b;
+  --rust-dark: #9a3f1d;
+  --olive: #5c6b3f;
+  --gold: #c89432;
+  --plum: #6b3559;
+  --teal: #2a5d5a;
+  --line: #2c241c;
+  --muted: #6b5d4d;
+  --shadow: rgba(26, 22, 18, 0.08);
+  /* level colors */
+  --lvl-1: #7aa454; /* toy - green */
+  --lvl-2: #5c8fa8; /* personal - blue */
+  --lvl-3: #c89432; /* shared - gold */
+  --lvl-4: #c5532b; /* saas - rust */
+  --lvl-5: #6b3559; /* production - plum */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  font-weight: 400;
+  background-image:
+    radial-gradient(circle at 15% 30%, rgba(197, 83, 43, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 85% 70%, rgba(92, 107, 63, 0.04) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  overflow-x: hidden;
+}
+
+/* ===== TOP TAB BAR ===== */
+header.topbar {
+  position: sticky;
+  top: 0;
+  background: var(--ink);
+  color: var(--paper);
+  z-index: 200;
+  border-bottom: 2px solid var(--rust);
+}
+.topbar-inner {
+  display: flex;
+  align-items: stretch;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0;
+}
+.brand-top {
+  padding: 14px 24px;
+  border-right: 1px solid rgba(245, 241, 232, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 240px;
+}
+.brand-top .b-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.brand-top .b-sub {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-top: 2px;
+}
+.tabs {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+}
+.tab {
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  padding: 16px 22px;
+  cursor: pointer;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-right: 1px solid rgba(245, 241, 232, 0.1);
+  transition: background 0.15s;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.tab:hover { background: rgba(245, 241, 232, 0.08); }
+.tab.active {
+  background: var(--rust);
+  color: var(--paper);
+}
+.tab .tab-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  opacity: 0.6;
+}
+.tab.active .tab-num { opacity: 0.9; color: #ffe3c4; }
+.tab .tab-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ===== LAYOUT ===== */
+.layout {
+  display: flex;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
+}
+
+/* ===== SIDE NAV ===== */
+nav.sidenav {
+  width: 260px;
+  border-right: 1px solid var(--line);
+  padding: 32px 20px;
+  background: var(--cream);
+  position: sticky;
+  top: 64px;
+  align-self: flex-start;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+nav.sidenav::-webkit-scrollbar { width: 6px; }
+nav.sidenav::-webkit-scrollbar-thumb { background: var(--rust); }
+
+.sn-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--olive);
+  font-weight: 600;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+}
+.sn-item {
+  display: block;
+  padding: 8px 10px;
+  margin-bottom: 2px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 13px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
+}
+.sn-item:hover {
+  background: rgba(197, 83, 43, 0.08);
+  border-left-color: var(--rust);
+  padding-left: 14px;
+}
+.sn-item.active {
+  background: var(--paper);
+  border-left-color: var(--rust);
+  font-weight: 600;
+  color: var(--rust-dark);
+}
+.sn-num {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+  margin-right: 8px;
+  min-width: 22px;
+}
+
+/* ===== MAIN CONTENT ===== */
+main.content {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+.pane { display: none; }
+.pane.active { display: block; animation: fadein 0.25s ease; }
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 56px 60px 80px;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.pane-header {
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+.part-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--rust);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.part-num::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rust);
+  opacity: 0.3;
+  max-width: 120px;
+}
+h1.part-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin-bottom: 20px;
+}
+h1.part-title .ital { font-style: italic; font-weight: 300; }
+h1.part-title .accent { color: var(--rust); font-weight: 700; }
+.pane-lede {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 640px;
+  font-weight: 300;
+  font-family: 'Fraunces', serif;
+}
+
+section.chapter {
+  padding: 48px 0;
+  border-top: 1px solid var(--line);
+}
+section.chapter:first-of-type { border-top: none; padding-top: 0; }
+
+.chapter-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--rust);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+  display: block;
+}
+h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin-bottom: 24px;
+  color: var(--ink);
+}
+h2 .ital { font-style: italic; font-weight: 300; }
+
+h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 44px 0 14px;
+  color: var(--ink);
+}
+h3::before {
+  content: '§ ';
+  color: var(--rust);
+  font-weight: 400;
+}
+h4 {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.3;
+  margin: 28px 0 12px;
+  letter-spacing: -0.01em;
+}
+
+p { margin-bottom: 18px; }
+.intro-para {
+  font-size: 20px;
+  line-height: 1.55;
+  font-weight: 300;
+  margin-bottom: 32px;
+  font-family: 'Fraunces', serif;
+}
+.intro-para .drop {
+  float: left;
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 68px;
+  line-height: 0.85;
+  padding: 6px 12px 0 0;
+  color: var(--rust);
+}
+
+strong { font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--rust-dark); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--rust); }
+ul, ol { margin: 0 0 18px 24px; }
+li { margin-bottom: 8px; }
+
+/* ===== CALLOUTS ===== */
+.callout {
+  background: var(--cream);
+  border-left: 4px solid var(--rust);
+  padding: 22px 26px;
+  margin: 26px 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--rust);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout.warn { border-left-color: var(--gold); background: rgba(200, 148, 50, 0.08); }
+.callout.warn .label { color: var(--gold); }
+.callout.tip { border-left-color: var(--olive); background: rgba(92, 107, 63, 0.08); }
+.callout.tip .label { color: var(--olive); }
+.callout.danger { border-left-color: #b53b2e; background: rgba(181, 59, 46, 0.08); }
+.callout.danger .label { color: #b53b2e; }
+
+/* ===== CODE ===== */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
+  background: var(--cream);
+  padding: 2px 7px;
+  border-radius: 3px;
+  color: var(--rust-dark);
+  border: 1px solid rgba(44, 36, 28, 0.1);
+}
+pre {
+  background: var(--ink);
+  color: #e8d9c4;
+  padding: 22px 26px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 22px 0;
+  font-size: 13px;
+  line-height: 1.65;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid var(--line);
+}
+pre code { background: transparent; color: inherit; border: none; padding: 0; }
+pre .cm { color: #8a7c6a; }
+pre .kw { color: #d4a85f; }
+pre .st { color: #a8c181; }
+pre .fn { color: #e8b87d; }
+
+/* ===== LEVEL BADGES ===== */
+.lvl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.lvl::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.lvl-1 { background: rgba(122, 164, 84, 0.15); color: var(--lvl-1); border: 1px solid var(--lvl-1); }
+.lvl-1::before { background: var(--lvl-1); }
+.lvl-2 { background: rgba(92, 143, 168, 0.15); color: var(--lvl-2); border: 1px solid var(--lvl-2); }
+.lvl-2::before { background: var(--lvl-2); }
+.lvl-3 { background: rgba(200, 148, 50, 0.15); color: var(--lvl-3); border: 1px solid var(--lvl-3); }
+.lvl-3::before { background: var(--lvl-3); }
+.lvl-4 { background: rgba(197, 83, 43, 0.15); color: var(--lvl-4); border: 1px solid var(--lvl-4); }
+.lvl-4::before { background: var(--lvl-4); }
+.lvl-5 { background: rgba(107, 53, 89, 0.15); color: var(--lvl-5); border: 1px solid var(--lvl-5); }
+.lvl-5::before { background: var(--lvl-5); }
+
+/* ===== BAND CARD ===== */
+.bands {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin: 32px 0;
+}
+.band {
+  border: 1.5px solid var(--line);
+  padding: 22px;
+  background: var(--paper);
+}
+.band-header {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+.band-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--rust);
+  margin-bottom: 14px;
+}
+.band p { font-size: 14px; margin-bottom: 10px; }
+.band .levels-included {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+
+/* ===== LEVEL TABLE ===== */
+.lvl-grid {
+  display: grid;
+  gap: 16px;
+  margin: 28px 0;
+}
+.lvl-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.lvl-row:last-child { border-bottom: none; }
+.lvl-num-big {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 0.9;
+  font-style: italic;
+}
+.lvl-row.l1 .lvl-num-big { color: var(--lvl-1); }
+.lvl-row.l2 .lvl-num-big { color: var(--lvl-2); }
+.lvl-row.l3 .lvl-num-big { color: var(--lvl-3); }
+.lvl-row.l4 .lvl-num-big { color: var(--lvl-4); }
+.lvl-row.l5 .lvl-num-big { color: var(--lvl-5); }
+.lvl-content h4 { margin-top: 0; }
+
+/* ===== TOOL CARDS ===== */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin: 28px 0;
+}
+.tool-card {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  padding: 22px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.tool-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 5px 5px 0 var(--line);
+}
+.tool-card .tool-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.tool-card .tool-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--rust);
+  margin-bottom: 10px;
+  display: block;
+}
+.tool-card p { font-size: 14px; margin-bottom: 8px; }
+.tool-card .meta-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===== TABLES ===== */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 26px 0;
+  font-size: 14px;
+}
+.compare-table th, .compare-table td {
+  text-align: left;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.compare-table th {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.compare-table tr:hover td { background: var(--cream); }
+.compare-table .tool-col {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--rust-dark);
+}
+
+/* ===== STEPS ===== */
+.steps { counter-reset: step; margin: 22px 0; }
+.step {
+  display: flex;
+  gap: 22px;
+  padding: 18px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.step:last-child { border: none; }
+.step::before {
+  counter-increment: step;
+  content: counter(step, decimal-leading-zero);
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 34px;
+  color: var(--rust);
+  line-height: 1;
+  min-width: 56px;
+  font-style: italic;
+}
+.step h4 { margin-top: 0; }
+.step p:last-child { margin-bottom: 0; }
+
+/* ===== PULL QUOTE ===== */
+.pullquote {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 28px;
+  line-height: 1.3;
+  margin: 44px 0;
+  padding: 22px 0 22px 30px;
+  border-left: 3px solid var(--rust);
+  position: relative;
+}
+.pullquote::before {
+  content: '"';
+  position: absolute;
+  top: -20px; left: 10px;
+  font-size: 100px;
+  color: var(--rust);
+  opacity: 0.25;
+  line-height: 1;
+  font-style: normal;
+}
+.pullquote cite {
+  display: block;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-style: normal;
+  color: var(--muted);
+  margin-top: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ===== GLOSSARY ===== */
+.glossary-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 22px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.glossary-item dt {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--rust-dark);
+}
+.glossary-item dd { font-size: 15px; line-height: 1.55; }
+
+/* ===== FLOW DIAGRAM ===== */
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+.flow-box {
+  flex: 1;
+  min-width: 130px;
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  padding: 14px;
+  text-align: center;
+  font-size: 13px;
+}
+.flow-box .flow-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: var(--rust-dark);
+}
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  color: var(--rust);
+  font-weight: 600;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+  position: relative;
+  padding-left: 30px;
+  margin: 28px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 7px; bottom: 7px;
+  width: 2px;
+  background: var(--rust);
+  opacity: 0.3;
+}
+.tl-item { position: relative; padding-bottom: 26px; }
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -28px; top: 6px;
+  width: 14px; height: 14px;
+  background: var(--rust);
+  border: 3px solid var(--paper);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--rust);
+}
+.tl-item h4 { margin-top: 0; }
+
+/* ===== PROMPT BOX ===== */
+.prompt-box {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 24px 28px;
+  margin: 22px 0;
+  border-radius: 4px;
+  border-left: 4px solid var(--gold);
+}
+.prompt-box .prompt-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.prompt-box p {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.55;
+  margin: 0;
+  color: var(--paper);
+}
+
+/* ===== DIAGRAM BLOCKS ===== */
+.diagram {
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  padding: 28px;
+  margin: 28px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* ===== PAGE NAV (prev/next) ===== */
+.page-nav {
+  margin-top: 60px;
+  padding-top: 32px;
+  border-top: 2px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-nav a {
+  flex: 1;
+  min-width: 240px;
+  padding: 18px 22px;
+  border: 1.5px solid var(--line);
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--paper);
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.page-nav a:hover {
+  background: var(--cream);
+  border-color: var(--rust);
+  color: var(--rust-dark);
+}
+.page-nav .pn-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--rust);
+  margin-bottom: 4px;
+}
+.page-nav .pn-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+.page-nav .next { text-align: right; }
+.page-nav .prev::before { content: '← '; color: var(--rust); }
+.page-nav .next::after { content: ' →'; color: var(--rust); }
+
+/* ===== END MARK ===== */
+.endmark {
+  text-align: center;
+  margin: 60px 0;
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--rust);
+  letter-spacing: 0.3em;
+}
+
+/* ===== HERO (intro pane only) ===== */
+.hero {
+  padding: 80px 60px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.hero .kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--rust);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero .kicker::before, .hero .kicker::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rust);
+  opacity: 0.4;
+  max-width: 60px;
+}
+.hero h1.hero-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(44px, 6.5vw, 86px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.hero h1.hero-title .accent {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--rust);
+  display: block;
+}
+.hero .lede {
+  font-size: 21px;
+  line-height: 1.5;
+  max-width: 620px;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+.hero .meta {
+  display: flex;
+  gap: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.hero .meta strong {
+  color: var(--ink);
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .layout { flex-direction: column; }
+  nav.sidenav {
+    width: 100%;
+    max-height: 220px;
+    position: relative;
+    top: 0;
+    border-right: none;
+    border-bottom: 2px solid var(--line);
+  }
+  .container { padding: 36px 22px 60px; }
+  .hero { padding: 50px 22px 30px; }
+  h2 { font-size: 30px; }
+  h1.part-title { font-size: 38px; }
+  h1.hero-title { font-size: 46px; }
+  .bands { grid-template-columns: 1fr; }
+  .brand-top { min-width: 180px; padding: 12px 16px; }
+  .brand-top .b-title { font-size: 14px; }
+  .tab { padding: 14px 14px; }
+  .glossary-item { grid-template-columns: 1fr; gap: 4px; }
+  .lvl-row { grid-template-columns: 60px 1fr; gap: 16px; }
+  .lvl-num-big { font-size: 42px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-top">
+      <div class="b-title">Vibe Coder's Field Manual</div>
+      <div class="b-sub">v2026 · for total beginners</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-pane="p-intro"><span class="tab-num">00</span><span class="tab-label">Start Here</span></button>
+      <button class="tab" data-pane="p-1"><span class="tab-num">Part 1</span><span class="tab-label">Foundations</span></button>
+      <button class="tab" data-pane="p-2"><span class="tab-num">Part 2</span><span class="tab-label">Coding Basics</span></button>
+      <button class="tab" data-pane="p-3"><span class="tab-num">Part 3</span><span class="tab-label">Setup</span></button>
+      <button class="tab" data-pane="p-4"><span class="tab-num">Part 4</span><span class="tab-label">Tools</span></button>
+      <button class="tab" data-pane="p-5"><span class="tab-num">Part 5</span><span class="tab-label">Building</span></button>
+      <button class="tab" data-pane="p-6"><span class="tab-num">Part 6</span><span class="tab-label">Levels</span></button>
+      <button class="tab" data-pane="p-7"><span class="tab-num">Part 7</span><span class="tab-label">Ship &amp; Beyond</span></button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidenav" id="sidenav"></nav>
+  <main class="content" id="content">
+<!-- PANES INJECTED BELOW -->
+
+<!-- ============== PANE: INTRO ============== -->
+<div class="pane active" id="p-intro">
+  <section class="hero">
+    <div class="kicker">A field manual · v2026.05</div>
+    <h1 class="hero-title">Build software<span class="accent">by describing it.</span></h1>
+    <p class="lede">
+      A complete, honest guide for someone with zero coding experience. Learn the language, the tools, the workflow — and how to ship real web apps, AI agents, and games — all by talking to AI.
+    </p>
+    <div class="meta">
+      <div><strong>For</strong>Total beginners on Windows</div>
+      <div><strong>Covers</strong>Cowork · Codex · Antigravity · Lovable · Bolt · Replit · Cursor · GitHub · VS Code</div>
+      <div><strong>You'll build</strong>Web apps, agents, games, mobile versions</div>
+      <div><strong>Time</strong>≈ 90 min full read · keep as reference</div>
+    </div>
+  </section>
+
+  <div class="container">
+    <h3 id="how-to-use">How to use this guide</h3>
+    <p>
+      The top bar has eight parts. Click any tab to jump there. The left sidebar within each part lists its chapters — click those to scroll within the current part. The browser back button works as expected.
+    </p>
+    <p>
+      You don't have to read it in order, but the parts build on each other. If you're brand new, go in sequence at least through Part 4. After that, jump around.
+    </p>
+
+    <h3>Level system</h3>
+    <p>Throughout this guide you'll see colored badges marking the difficulty of a project, concept, or tool. They group into three broad bands:</p>
+
+    <div class="bands">
+      <div class="band">
+        <div class="band-header">Beginner</div>
+        <div class="band-sub">First 30 days</div>
+        <p>You're learning the loop: describe, generate, run, fix. Tiny apps that solve one problem for one person — you.</p>
+        <div class="levels-included">
+          <span class="lvl lvl-1">L1 Toy</span>
+          <span class="lvl lvl-2">L2 Personal</span>
+        </div>
+      </div>
+      <div class="band">
+        <div class="band-header">Intermediate</div>
+        <div class="band-sub">Months 2–6</div>
+        <p>You can ship a real app to other people. You handle logins, databases, deployment. You know when AI is going off the rails.</p>
+        <div class="levels-included">
+          <span class="lvl lvl-3">L3 Shared</span>
+          <span class="lvl lvl-4">L4 SaaS</span>
+        </div>
+      </div>
+      <div class="band">
+        <div class="band-header">Advanced</div>
+        <div class="band-sub">6 months +</div>
+        <p>You build things real users pay for. You think about security, performance, monitoring, and you can read code well enough to override AI when needed.</p>
+        <div class="levels-included">
+          <span class="lvl lvl-5">L5 Production</span>
+        </div>
+      </div>
+    </div>
+
+    <p>Part 6 explains every level in depth and gives you a concrete project at each one.</p>
+
+    <h3>What's new in this version</h3>
+    <ul>
+      <li><strong>Top tabs + side nav</strong> — no more endless scrolling. Each part is its own page.</li>
+      <li><strong>An entire new Part 2</strong> covering coding fundamentals: how the internet works, data structures, logic, databases, Git deeply, auth, APIs, environments.</li>
+      <li><strong>A dedicated Levels part</strong> with five tiers (Toy → Production) and a real project at each.</li>
+      <li><strong>Level badges</strong> across every chapter so you know what's beginner vs advanced.</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="label">Read this if nothing else</div>
+      <p>You will not become a "coder." You'll become a <em>builder</em>. The difference: a coder writes code, a builder ships software. AI handles the code. Your job is taste, judgment, and persistence. None of that needs a CS degree.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="next" data-goto="p-1">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 1 · Foundations</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 1 - FOUNDATIONS ============== -->
+<div class="pane" id="p-1">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part One</div>
+      <h1 class="part-title">The <span class="ital">foundations</span> of vibe coding</h1>
+      <p class="pane-lede">What vibe coding actually is, the mental model of an app, the universal vocabulary you need before any tool makes sense.</p>
+    </div>
+
+    <section class="chapter" id="ch-1-1">
+      <span class="chapter-num">CHAPTER 1.1</span>
+      <h2>What is <span class="ital">vibe coding</span>, really?</h2>
+
+      <p class="intro-para">
+        <span class="drop">V</span>ibe coding is a term coined in February 2025 by Andrej Karpathy (co-founder of OpenAI, former AI lead at Tesla). The idea: instead of typing every line of code yourself, you describe what you want in plain English, and an AI model writes the code for you. You read it, run it, see what breaks, and tell the AI to fix or change things. You "surrender to the vibes" of the model.
+      </p>
+
+      <p>
+        A year later, in 2026, this is no longer a niche thing. It's the dominant way solo builders, small teams, and even working professionals create software. The tools have gotten genuinely good. Real apps with real users get shipped this way every day.
+      </p>
+
+      <p>Two big categories of vibe coding tools, and the difference matters:</p>
+
+      <div class="tool-grid">
+        <div class="tool-card">
+          <span class="tool-tag">Category A</span>
+          <div class="tool-name">App Builders</div>
+          <p>You chat. They build the whole thing — frontend, backend, database, deployment. You may never see the code.</p>
+          <div class="meta-row">Lovable · Bolt · Replit · v0 · Hostinger Horizons · Base44</div>
+        </div>
+        <div class="tool-card">
+          <span class="tool-tag">Category B</span>
+          <div class="tool-name">AI Coding Agents</div>
+          <p>They live on your computer or terminal. They write and edit real code files, run commands, often work inside your editor.</p>
+          <div class="meta-row">Claude Code · Codex · Cursor · Antigravity · Windsurf · Cowork</div>
+        </div>
+      </div>
+
+      <p>
+        <strong>Category A is where you'll start.</strong> Category B is where you'll graduate to when you want more control. By the end of this guide you'll be comfortable in both.
+      </p>
+
+      <div class="callout">
+        <div class="label">Why this guide exists</div>
+        <p>Most "vibe coding" content assumes you already know what a terminal is, what GitHub does, or what "deploying" means. This one doesn't. We start from zero and don't skip steps.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-1-2">
+      <span class="chapter-num">CHAPTER 1.2</span>
+      <h2>The mental model of an <span class="ital">app</span></h2>
+
+      <p>Before any tools, you need a picture of what an app actually <em>is</em>. Almost every modern app has the same three pieces. Once you see them, every tool in this guide will make sense.</p>
+
+      <div class="flow">
+        <div class="flow-box">
+          <div class="flow-title">Frontend</div>
+          What the user sees and clicks. Buttons, screens, colors, layout.
+        </div>
+        <div class="flow-arrow">↔</div>
+        <div class="flow-box">
+          <div class="flow-title">Backend</div>
+          The brain. Handles logic, logins, payments, calling AI.
+        </div>
+        <div class="flow-arrow">↔</div>
+        <div class="flow-box">
+          <div class="flow-title">Database</div>
+          Where data lives — user accounts, posts, scores, settings.
+        </div>
+      </div>
+
+      <p>Plus two helpers:</p>
+      <ul>
+        <li><strong>Hosting</strong> — the computer on the internet that runs your app 24/7 so people can visit it.</li>
+        <li><strong>Domain name</strong> — the friendly address like <code>mycoolapp.com</code> that points to your hosting.</li>
+      </ul>
+
+      <p>A "full-stack" app means all three layers exist. An AI agent is usually just a backend that talks to an AI model and other services. A simple game can sometimes be just a frontend.</p>
+
+      <p>The good news: modern vibe coding tools handle <em>all of this</em> for you when you're starting out. Lovable, Bolt, Replit will spin up frontend + backend + database + hosting from one prompt. Your job is to describe the thing.</p>
+    </section>
+
+    <section class="chapter" id="ch-1-3">
+      <span class="chapter-num">CHAPTER 1.3</span>
+      <h2>The plain-English <span class="ital">glossary</span></h2>
+      <p>Bookmark this. Every term here shows up across the rest of the guide and across every tool you'll touch.</p>
+      <dl>
+        <div class="glossary-item"><dt>Code</dt><dd>Instructions for a computer in a programming language. Looks like <code>const greeting = "hello"</code>. You won't write much; AI will.</dd></div>
+        <div class="glossary-item"><dt>File &amp; folder</dt><dd>A project is just a folder of text files. <code>index.html</code>, <code>app.js</code>, <code>style.css</code>. The folder is sometimes called a "repo" (repository).</dd></div>
+        <div class="glossary-item"><dt>Markdown</dt><dd>A simple way to format text using symbols. <code>**bold**</code> becomes <strong>bold</strong>. <code># Heading</code> becomes a heading. Files end in <code>.md</code>. You'll see Markdown everywhere — README files on GitHub, AI agent instructions, Antigravity's "artifacts." Easier to read than HTML.</dd></div>
+        <div class="glossary-item"><dt>Terminal / Command Line</dt><dd>A black window where you type text commands instead of clicking. On Windows it's <strong>PowerShell</strong> or <strong>Command Prompt</strong>. Vibe coding tools have made it mostly optional.</dd></div>
+        <div class="glossary-item"><dt>VS Code</dt><dd>Microsoft's free code editor. A souped-up Notepad — a window for editing files. Most popular code editor on the planet. Many AI tools are built on top of it.</dd></div>
+        <div class="glossary-item"><dt>IDE</dt><dd>Integrated Development Environment — a code editor with extras built in (terminal, file browser, debugger). VS Code, Cursor, Antigravity, Windsurf are all IDEs.</dd></div>
+        <div class="glossary-item"><dt>Node.js</dt><dd>Lets your computer run JavaScript outside a browser. Many AI tools need it installed. You install it once and forget about it.</dd></div>
+        <div class="glossary-item"><dt>npm / npx</dt><dd>Comes with Node.js. <code>npm</code> ("Node Package Manager") installs little JavaScript programs called "packages." <code>npx</code> runs a package without installing it permanently. You'll type <code>npx antigravity-ide</code> to launch Antigravity, for example.</dd></div>
+        <div class="glossary-item"><dt>Git</dt><dd>Tracks every change to your files, like a time machine. Created by Linus Torvalds. Install once.</dd></div>
+        <div class="glossary-item"><dt>GitHub</dt><dd>A website that stores Git-tracked projects in the cloud. Free for most uses. Think Google Drive but for code. <strong>Git is the tool. GitHub is the website.</strong></dd></div>
+        <div class="glossary-item"><dt>Repository (Repo)</dt><dd>A single project on GitHub. Just a folder of files with version history.</dd></div>
+        <div class="glossary-item"><dt>API</dt><dd>Application Programming Interface. A way for one program to talk to another. "Calling the OpenAI API" means sending a request over the internet to OpenAI's servers and getting an answer back.</dd></div>
+        <div class="glossary-item"><dt>API key</dt><dd>A long secret password that proves you're allowed to use an API. Treat it like a credit card.</dd></div>
+        <div class="glossary-item"><dt>Frontend / Backend</dt><dd>Frontend = visible part (browser/phone). Backend = invisible server part. Database = storage.</dd></div>
+        <div class="glossary-item"><dt>Framework</dt><dd>Pre-made skeleton of code that handles common patterns. <strong>React</strong> for frontends, <strong>Next.js</strong> wraps React. AI will pick for you.</dd></div>
+        <div class="glossary-item"><dt>Library / Package</dt><dd>Reusable chunk of code someone else wrote that you "import." <code>react</code>, <code>lodash</code>, <code>tailwind</code>.</dd></div>
+        <div class="glossary-item"><dt>Supabase</dt><dd>Free/cheap service that gives you a database, logins, file storage with almost no setup. Lovable, Bolt, Antigravity all connect to it.</dd></div>
+        <div class="glossary-item"><dt>Token (AI)</dt><dd>A chunk of text, roughly ¾ of a word. AI tools charge by tokens. "5M tokens" ≈ 5 million words of conversation.</dd></div>
+        <div class="glossary-item"><dt>Context window</dt><dd>How much text an AI holds in its head at once. Bigger = it can read more of your code before answering.</dd></div>
+        <div class="glossary-item"><dt>Prompt</dt><dd>The instruction you give the AI. "Build a to-do app with dark mode" is a prompt.</dd></div>
+        <div class="glossary-item"><dt>Agent</dt><dd>An AI that takes actions, not just answers questions. Reads files, runs commands, browses the web, edits code on its own. Antigravity, Claude Code, Cowork, Codex are agentic.</dd></div>
+        <div class="glossary-item"><dt>MCP</dt><dd>Model Context Protocol. An open standard, started by Anthropic, for hooking AI tools into external services like Slack, Notion, Gmail, Supabase.</dd></div>
+        <div class="glossary-item"><dt>Artifact</dt><dd>A file the AI produces as proof of its work — a plan, a summary, a test result.</dd></div>
+        <div class="glossary-item"><dt>Sandbox / VM</dt><dd>Isolated mini-computer the AI runs commands inside, so it can't trash your real machine.</dd></div>
+        <div class="glossary-item"><dt>Deployment / Hosting</dt><dd>Putting your app on a public computer so the world can use it. Common free hosts: Vercel, Netlify, Cloudflare Pages, Render.</dd></div>
+      </dl>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-intro">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Start Here</div>
+      </a>
+      <a class="next" data-goto="p-2">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 2 · Coding Basics</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 2 - CODING BASICS ============== -->
+<div class="pane" id="p-2">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part Two</div>
+      <h1 class="part-title">Coding <span class="ital">basics</span> — the mental scaffolding</h1>
+      <p class="pane-lede">You won't write much code. But understanding how code <em>thinks</em> makes every AI conversation faster, every bug less mysterious, and every tool more usable.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="label">Why this part exists</div>
+      <p>Vibe coding isn't no-code. It's <em>less</em> code. When AI writes something, you'll occasionally need to peek at it. When something breaks, you need to be able to describe the problem precisely. These eight chapters give you exactly enough vocabulary to do that — no more, no less.</p>
+    </div>
+
+    <!-- 2.1 INTERNET -->
+    <section class="chapter" id="ch-2-1">
+      <span class="chapter-num">CHAPTER 2.1 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>How the <span class="ital">internet</span> actually works</h2>
+
+      <p class="intro-para">
+        <span class="drop">E</span>very app you'll build uses the same plumbing. When you understand the plumbing — even at a cartoon level — you'll stop being mystified by errors like "404" or "CORS error" or "the API is down."
+      </p>
+
+      <h3>The basic transaction</h3>
+      <p>Whenever you type a URL into your browser, this happens:</p>
+
+      <div class="flow">
+        <div class="flow-box"><div class="flow-title">Browser</div>Sends a request to a server: "give me this page."</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">DNS</div>Looks up which computer the domain points to.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">Server</div>Receives the request, prepares a response.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">Browser</div>Receives the response, displays it.</div>
+      </div>
+
+      <p>This is <strong>HTTP</strong> (HyperText Transfer Protocol). Every web request is HTTP. Your browser sends a <strong>request</strong>; the server sends a <strong>response</strong>. That's it.</p>
+
+      <h3>The HTTP verbs you'll see in your AI conversations</h3>
+      <table class="compare-table">
+        <thead><tr><th>Verb</th><th>Means</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="tool-col">GET</td><td>"Give me data"</td><td>Loading a webpage, fetching a list of users</td></tr>
+          <tr><td class="tool-col">POST</td><td>"Create something new"</td><td>Submitting a signup form</td></tr>
+          <tr><td class="tool-col">PUT / PATCH</td><td>"Update something"</td><td>Editing your profile</td></tr>
+          <tr><td class="tool-col">DELETE</td><td>"Remove something"</td><td>Deleting a post</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Status codes — what the server says back</h3>
+      <p>Every HTTP response includes a 3-digit code. The first digit tells you the family:</p>
+
+      <ul>
+        <li><strong>2xx — Success.</strong> <code>200 OK</code> is the most common: "here's what you asked for."</li>
+        <li><strong>3xx — Redirect.</strong> "Go look over there instead."</li>
+        <li><strong>4xx — You messed up.</strong> <code>404</code> = page not found. <code>401</code> = you're not logged in. <code>403</code> = you can't access this. <code>400</code> = your request was malformed.</li>
+        <li><strong>5xx — Server messed up.</strong> <code>500</code> = something broke on the server. <code>503</code> = server overloaded.</li>
+      </ul>
+
+      <h3>What's a "server" anyway?</h3>
+      <p>A server is just a computer running 24/7 with a piece of software that listens for requests. It could be a giant Amazon data center or a Raspberry Pi in your closet — same idea. When you "deploy" your app to Vercel or Netlify, you're putting your code on their servers.</p>
+
+      <h3>The browser developer console</h3>
+      <p>Press <strong>F12</strong> in any browser. The <strong>Network</strong> tab shows every HTTP request your app made — green ones succeeded, red ones failed. When you tell an AI "my app isn't loading data," screenshot this tab. It's gold.</p>
+
+      <div class="callout">
+        <div class="label">CORS in one sentence</div>
+        <p>If you ever see a "CORS error," it means: the browser blocked your frontend from talking to a different server because that server didn't explicitly allow it. Tell the AI: "I'm getting a CORS error from [URL]. Add the right CORS headers." It'll handle it.</p>
+      </div>
+    </section>
+
+    <!-- 2.2 DATA STRUCTURES -->
+    <section class="chapter" id="ch-2-2">
+      <span class="chapter-num">CHAPTER 2.2 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>Data structures: <span class="ital">arrays, objects, JSON</span></h2>
+
+      <p>Apps move data around constantly. There are really only three shapes of data you need to recognize on sight.</p>
+
+      <h3>1. Values</h3>
+      <p>The basics:</p>
+      <pre><code><span class="cm">// Numbers</span>
+<span class="kw">const</span> age = <span class="st">28</span>;
+<span class="kw">const</span> price = <span class="st">49.99</span>;
+
+<span class="cm">// Strings (text)</span>
+<span class="kw">const</span> name = <span class="st">"Maya"</span>;
+
+<span class="cm">// Booleans (true/false)</span>
+<span class="kw">const</span> isLoggedIn = <span class="kw">true</span>;
+
+<span class="cm">// Empty / nothing</span>
+<span class="kw">const</span> nothing = <span class="kw">null</span>;</code></pre>
+
+      <h3>2. Arrays — ordered lists</h3>
+      <p>Square brackets <code>[ ]</code>. Items separated by commas. Indexed from <strong>zero</strong>, not one.</p>
+      <pre><code><span class="kw">const</span> fruits = [<span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"cherry"</span>];
+
+fruits[<span class="st">0</span>]   <span class="cm">// "apple"   ← yes, zero, not one</span>
+fruits[<span class="st">1</span>]   <span class="cm">// "banana"</span>
+fruits.length    <span class="cm">// 3</span></code></pre>
+      <p>Anywhere you see "a list of things" in an app — list of users, list of habits, list of messages — under the hood, that's an array.</p>
+
+      <h3>3. Objects — labeled boxes</h3>
+      <p>Curly braces <code>{ }</code>. Each piece of data has a <strong>key</strong> (label) and a <strong>value</strong>.</p>
+      <pre><code><span class="kw">const</span> user = {
+  name: <span class="st">"Maya"</span>,
+  age: <span class="st">28</span>,
+  isLoggedIn: <span class="kw">true</span>,
+  email: <span class="st">"maya@example.com"</span>
+};
+
+user.name        <span class="cm">// "Maya"</span>
+user.email       <span class="cm">// "maya@example.com"</span></code></pre>
+
+      <p>Anywhere you see "a thing with several attributes" — a user, a product, a blog post — that's an object.</p>
+
+      <h3>The combo: array of objects</h3>
+      <p>The most common shape in real apps. A list, where each item has multiple fields:</p>
+      <pre><code><span class="kw">const</span> habits = [
+  { name: <span class="st">"Drink water"</span>, icon: <span class="st">"💧"</span>, streak: <span class="st">12</span> },
+  { name: <span class="st">"Read"</span>,        icon: <span class="st">"📖"</span>, streak: <span class="st">3</span>  },
+  { name: <span class="st">"Walk"</span>,        icon: <span class="st">"🚶"</span>, streak: <span class="st">21</span> }
+];
+
+habits[<span class="st">0</span>].streak  <span class="cm">// 12</span>
+habits.length      <span class="cm">// 3</span></code></pre>
+
+      <h3>JSON — the universal exchange format</h3>
+      <p><strong>JSON</strong> (JavaScript Object Notation) is just text that looks like arrays and objects. It's how data travels across the internet between apps. Same shape as the code above, with quotes around the keys:</p>
+      <pre><code>{
+  <span class="st">"habits"</span>: [
+    { <span class="st">"name"</span>: <span class="st">"Drink water"</span>, <span class="st">"streak"</span>: <span class="st">12</span> },
+    { <span class="st">"name"</span>: <span class="st">"Read"</span>, <span class="st">"streak"</span>: <span class="st">3</span> }
+  ],
+  <span class="st">"user"</span>: <span class="st">"maya@example.com"</span>
+}</code></pre>
+
+      <p>Every API response you'll see in this guide is JSON. When you call OpenAI's API, the answer comes back as JSON. When your frontend talks to your backend, it's JSON. <strong>Learn to read it; you'll read it daily.</strong></p>
+
+      <div class="callout tip">
+        <div class="label">A useful habit</div>
+        <p>When debugging, ask the AI: "Show me the exact JSON your backend is returning for this request." Then you can spot if a field is missing, named wrong, or has the wrong type.</p>
+      </div>
+    </section>
+
+    <!-- 2.3 LOGIC -->
+    <section class="chapter" id="ch-2-3">
+      <span class="chapter-num">CHAPTER 2.3 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>Logic basics: <span class="ital">if, loops, functions</span></h2>
+
+      <p>The three building blocks of every program. Once you can read these, you can read 70% of any AI-generated code.</p>
+
+      <h3>1. if / else — making decisions</h3>
+      <p>"If this is true, do X. Otherwise, do Y."</p>
+      <pre><code><span class="kw">if</span> (user.age &gt;= <span class="st">18</span>) {
+  showAdultContent();
+} <span class="kw">else</span> {
+  showKidContent();
+}</code></pre>
+
+      <p>Comparisons: <code>===</code> means "equal to" (use this), <code>!==</code> means "not equal." <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code> as you'd expect.</p>
+
+      <p>Combine with <code>&amp;&amp;</code> (and) and <code>||</code> (or):</p>
+      <pre><code><span class="kw">if</span> (user.isLoggedIn &amp;&amp; user.age &gt;= <span class="st">18</span>) {
+  <span class="cm">// must be logged in AND 18+</span>
+}</code></pre>
+
+      <h3>2. Loops — doing something for each item</h3>
+      <p>The most common pattern: "for each thing in this list, do something."</p>
+      <pre><code><span class="kw">for</span> (<span class="kw">const</span> habit <span class="kw">of</span> habits) {
+  console.log(habit.name);
+}</code></pre>
+
+      <p>In modern JavaScript and React, you'll mostly see this written as <code>.map()</code> — which builds a new list by transforming each item:</p>
+      <pre><code><span class="cm">// take each habit and pull out just its name</span>
+<span class="kw">const</span> names = habits.map(habit =&gt; habit.name);
+<span class="cm">// names = ["Drink water", "Read", "Walk"]</span></code></pre>
+
+      <p>And <code>.filter()</code> — which builds a new list of only the items that match a condition:</p>
+      <pre><code><span class="kw">const</span> longStreaks = habits.filter(h =&gt; h.streak &gt; <span class="st">10</span>);
+<span class="cm">// longStreaks = items where streak is greater than 10</span></code></pre>
+
+      <h3>3. Functions — reusable bundles of logic</h3>
+      <p>A function is a labeled chunk of code you can call repeatedly. Takes inputs (<em>parameters</em>), returns an output.</p>
+      <pre><code><span class="kw">function</span> <span class="fn">greet</span>(name) {
+  <span class="kw">return</span> <span class="st">"Hello, "</span> + name + <span class="st">"!"</span>;
+}
+
+<span class="fn">greet</span>(<span class="st">"Maya"</span>);   <span class="cm">// "Hello, Maya!"</span>
+<span class="fn">greet</span>(<span class="st">"Sam"</span>);    <span class="cm">// "Hello, Sam!"</span></code></pre>
+
+      <p>You'll see functions written three ways in modern JS, all meaning the same thing:</p>
+      <pre><code><span class="cm">// classic</span>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
+
+<span class="cm">// arrow function (the cool modern way)</span>
+<span class="kw">const</span> <span class="fn">add</span> = (a, b) =&gt; a + b;
+
+<span class="cm">// arrow with multi-line body</span>
+<span class="kw">const</span> <span class="fn">add</span> = (a, b) =&gt; {
+  <span class="kw">return</span> a + b;
+};</code></pre>
+
+      <p>If you can identify a function definition, a loop, and an if statement in a file, you can have a productive conversation with AI about that file.</p>
+    </section>
+
+    <!-- 2.4 DATABASES -->
+    <section class="chapter" id="ch-2-4">
+      <span class="chapter-num">CHAPTER 2.4 · <span class="lvl lvl-2">L2 Personal</span></span>
+      <h2>How <span class="ital">databases</span> work</h2>
+
+      <p>A database is just <em>persistent storage</em> — data that survives a refresh, a shutdown, a deploy. The most common kind for beginners is a <strong>relational database</strong>, which thinks in tables.</p>
+
+      <h3>Tables, rows, columns</h3>
+      <p>Picture a spreadsheet. The whole sheet is a <strong>table</strong>. Each horizontal line is a <strong>row</strong> (one record). Each vertical line is a <strong>column</strong> (one field).</p>
+
+      <div class="diagram">┌─────────── TABLE: habits ───────────────────────┐
+│  id   │  name        │  icon   │  user_id  │  …  │
+├───────┼──────────────┼─────────┼───────────┼─────┤
+│  1    │  Drink water │  💧     │  abc-123  │  …  │  ← row
+│  2    │  Read        │  📖     │  abc-123  │  …  │  ← row
+│  3    │  Meditate    │  🧘     │  xyz-789  │  …  │  ← row
+└───────┴──────────────┴─────────┴───────────┴─────┘
+   ↑          ↑
+ column     column</div>
+
+      <p>Every table has a <strong>primary key</strong> — usually called <code>id</code> — that uniquely identifies each row. Some tables also have <strong>foreign keys</strong> — columns that point to a row in another table (here, <code>user_id</code> points to a row in a <code>users</code> table).</p>
+
+      <h3>The four operations: CRUD</h3>
+      <p>Everything you do to a database is one of four things, abbreviated <strong>CRUD</strong>:</p>
+      <ul>
+        <li><strong>Create</strong> — add a new row</li>
+        <li><strong>Read</strong> — fetch one or more rows</li>
+        <li><strong>Update</strong> — change a row</li>
+        <li><strong>Delete</strong> — remove a row</li>
+      </ul>
+      <p>"Build a CRUD app" means "build an app that lets users create, read, update, and delete some kind of record." It's the bread and butter of vibe coding.</p>
+
+      <h3>SQL — the language databases speak</h3>
+      <p>You'll rarely write SQL by hand (AI will), but recognizing it helps. SQL stands for Structured Query Language.</p>
+      <pre><code><span class="cm">-- Read all habits for one user</span>
+<span class="kw">SELECT</span> name, icon <span class="kw">FROM</span> habits <span class="kw">WHERE</span> user_id = <span class="st">'abc-123'</span>;
+
+<span class="cm">-- Create a new habit</span>
+<span class="kw">INSERT INTO</span> habits (name, icon, user_id)
+<span class="kw">VALUES</span> (<span class="st">'Stretch'</span>, <span class="st">'🤸'</span>, <span class="st">'abc-123'</span>);
+
+<span class="cm">-- Update a habit's name</span>
+<span class="kw">UPDATE</span> habits <span class="kw">SET</span> name = <span class="st">'Yoga'</span> <span class="kw">WHERE</span> id = <span class="st">3</span>;
+
+<span class="cm">-- Delete a habit</span>
+<span class="kw">DELETE FROM</span> habits <span class="kw">WHERE</span> id = <span class="st">3</span>;</code></pre>
+
+      <h3>Supabase — your beginner-friendly database</h3>
+      <p>Supabase is a free service that gives you a real database (PostgreSQL), built-in user authentication, and file storage. You configure tables in a friendly web UI; AI generates the queries.</p>
+
+      <p>To create a habits table in Supabase, you'd click "New table" and define columns. AI can do this for you via Supabase's MCP server, or by writing SQL.</p>
+
+      <div class="callout danger">
+        <div class="label">Row Level Security — turn this on</div>
+        <p>By default, anyone who knows your Supabase URL can read your entire database. <strong>Row Level Security (RLS)</strong> fixes that — it restricts which rows a user can see. Always say in your prompts: "use Supabase with Row Level Security enabled and policies so users only see their own rows." This is the #1 vibe coding security mistake.</p>
+      </div>
+
+      <h3>NoSQL — the other flavor</h3>
+      <p>Some databases (MongoDB, Firestore) don't use tables — they store JSON-like documents. You may bump into these. The mental model is similar: "collections" instead of tables, "documents" instead of rows. Start with Supabase; come back if you ever need NoSQL.</p>
+    </section>
+
+    <!-- 2.5 VERSION CONTROL DEEPER -->
+    <section class="chapter" id="ch-2-5">
+      <span class="chapter-num">CHAPTER 2.5 · <span class="lvl lvl-2">L2 Personal</span></span>
+      <h2>Version control: <span class="ital">branches, merges, conflicts</span></h2>
+
+      <p>You met Git briefly in Part 1. Here's a deeper picture, because Git is the safety net that lets you take risks with AI.</p>
+
+      <h3>The model: snapshots on a timeline</h3>
+      <p>Every <code>git commit</code> is a snapshot of your entire project at that moment. Git keeps them all, with messages. Imagine a vertical line, with each commit a dot:</p>
+
+      <div class="diagram">main branch
+   ●  "Initial commit"
+   │
+   ●  "Add login page"
+   │
+   ●  "Wire up Supabase auth"
+   │
+   ●  "Add dashboard"   ← you are here</div>
+
+      <p>You can travel back to any commit. The <code>git log</code> command shows them all. In VS Code's Source Control panel you'll see this visually.</p>
+
+      <h3>Branches — parallel timelines</h3>
+      <p>A <strong>branch</strong> is a parallel line of commits. The main one is called <code>main</code> (sometimes <code>master</code>). You can create a new branch to try something risky without affecting <code>main</code>.</p>
+
+      <div class="diagram">main
+   ●──●──●──●
+            │
+            ●──●  experiment-dark-mode (branch)</div>
+
+      <p>You'd create the branch with <code>git checkout -b experiment-dark-mode</code>. Now any commits go to that branch only. <code>main</code> stays clean.</p>
+
+      <h3>Merging — bringing branches back together</h3>
+      <p>When the experiment works, you merge it back into main. The branches join up:</p>
+
+      <div class="diagram">main
+   ●──●──●──●──────●  ← merge commit
+            │     ╱
+            ●──●╱   experiment-dark-mode</div>
+
+      <p>From your <code>main</code> branch: <code>git merge experiment-dark-mode</code>. Done.</p>
+
+      <h3>Conflicts — when Git can't auto-merge</h3>
+      <p>If both branches edited the same line of the same file in different ways, Git can't decide. It marks the conflict and asks you to pick:</p>
+      <pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+const theme = "light";
+=======
+const theme = "dark";
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; experiment-dark-mode</code></pre>
+      <p>You (or AI) edit the file to pick the version you want, then commit again. Conflicts feel scary the first time. After three, they're routine.</p>
+
+      <h3>Pull requests (PRs)</h3>
+      <p>On GitHub, when you push a branch, you can open a <strong>pull request</strong> — basically: "hey team, please review my branch before we merge it into main." Solo, you'll PR yourself; with collaborators, this is how all changes flow.</p>
+
+      <h3>The everyday rhythm</h3>
+      <ol>
+        <li>Before a risky AI task: <code>git checkout -b try-something</code></li>
+        <li>Let AI work. Commit as you go: <code>git add . &amp;&amp; git commit -m "wip"</code></li>
+        <li>If it works: <code>git checkout main &amp;&amp; git merge try-something</code></li>
+        <li>If it doesn't: <code>git checkout main</code> — you're back to safety. Delete the branch with <code>git branch -D try-something</code>.</li>
+      </ol>
+
+      <div class="callout tip">
+        <div class="label">The killer phrase</div>
+        <p>Tell your AI tool: "Before you make these changes, create a new Git branch called X. Work on it. I'll merge to main only if I like the result." Antigravity, Cursor, Claude Code all handle this.</p>
+      </div>
+    </section>
+
+    <!-- 2.6 AUTH -->
+    <section class="chapter" id="ch-2-6">
+      <span class="chapter-num">CHAPTER 2.6 · <span class="lvl lvl-3">L3 Shared</span></span>
+      <h2>Authentication &amp; <span class="ital">sessions</span></h2>
+
+      <p>Almost every app you'll build needs logins. The mechanics are simpler than they look once you see the flow.</p>
+
+      <h3>The login dance</h3>
+      <div class="flow">
+        <div class="flow-box"><div class="flow-title">1. User</div>Enters email + password.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">2. Server</div>Checks against stored hash. If match: issues a token.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">3. Browser</div>Stores token. Sends it with every future request.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">4. Server</div>Verifies token on each request. "Yep, this is Maya."</div>
+      </div>
+
+      <h3>Why passwords aren't stored as-is</h3>
+      <p>If a server stored "maya@example.com / hunter2" in plain text and got hacked, every account is exposed. Instead, servers store a <strong>hash</strong> — a one-way scramble. "hunter2" hashes to something like <code>$2b$10$N9qo8uLOickgx2ZMRZoMye…</code>. Even the server can't reverse it. To check a login, they hash what the user typed and compare hashes.</p>
+
+      <p>You will <strong>never write password-hashing code yourself</strong>. Supabase Auth, Auth0, Clerk, Firebase Auth all handle it. But you should ask, when AI builds auth for you: "are you storing passwords as bcrypt hashes, not plaintext?"</p>
+
+      <h3>Sessions and tokens</h3>
+      <p>Two main schemes you'll see:</p>
+      <ul>
+        <li><strong>Session cookies.</strong> Server stores session info, browser holds an opaque ID in a cookie. Older but solid.</li>
+        <li><strong>JWT (JSON Web Token).</strong> A self-contained encrypted token. Browser holds it; server verifies it on each request. Modern apps lean this way.</li>
+      </ul>
+
+      <p>Supabase uses JWTs. The token includes the user's ID, email, and expiration time, signed by Supabase so it can't be forged. When the frontend makes a request, it attaches the token in a header: <code>Authorization: Bearer eyJhbGc...</code></p>
+
+      <h3>OAuth — "sign in with Google"</h3>
+      <p>OAuth is the protocol behind every "Sign in with [Google / GitHub / Apple]" button. The dance:</p>
+      <ol>
+        <li>User clicks "Sign in with Google."</li>
+        <li>They're sent to Google's login page.</li>
+        <li>They confirm "yes, let this app know my email."</li>
+        <li>Google redirects them back to your app with a token.</li>
+        <li>Your app uses the token to know who they are.</li>
+      </ol>
+      <p>You never see their Google password. Supabase + Lovable + Bolt all support OAuth out of the box.</p>
+
+      <h3>Authorization vs Authentication</h3>
+      <ul>
+        <li><strong>Authentication</strong> = "who are you?" (login)</li>
+        <li><strong>Authorization</strong> = "what are you allowed to do?" (permissions)</li>
+      </ul>
+      <p>Row Level Security in Supabase is authorization. Authentication says "this is Maya"; authorization says "Maya can only see her own habits, not Sam's."</p>
+
+      <div class="callout danger">
+        <div class="label">The mistake everyone makes</div>
+        <p>Building auth that "works" but doesn't check authorization. A user can be logged in (authenticated) and still hit URLs to view other people's data because the server forgot to check. After AI builds login, always ask: "now write authorization checks that make sure users can only see/edit their own data. Show me where you added them."</p>
+      </div>
+    </section>
+
+    <!-- 2.7 APIs -->
+    <section class="chapter" id="ch-2-7">
+      <span class="chapter-num">CHAPTER 2.7 · <span class="lvl lvl-3">L3 Shared</span></span>
+      <h2>How <span class="ital">APIs</span> actually work end-to-end</h2>
+
+      <p>You'll call APIs constantly: the OpenAI API for AI features, the Stripe API for payments, the Supabase API for data. They all follow the same pattern.</p>
+
+      <h3>The anatomy of an API call</h3>
+      <p>Here's a typical request to OpenAI, written in JavaScript:</p>
+      <pre><code><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="st">"https://api.openai.com/v1/chat/completions"</span>, {
+  method: <span class="st">"POST"</span>,
+  headers: {
+    <span class="st">"Content-Type"</span>: <span class="st">"application/json"</span>,
+    <span class="st">"Authorization"</span>: <span class="st">"Bearer "</span> + apiKey
+  },
+  body: JSON.stringify({
+    model: <span class="st">"gpt-5.3"</span>,
+    messages: [{ role: <span class="st">"user"</span>, content: <span class="st">"Write a haiku about cats"</span> }]
+  })
+});
+
+<span class="kw">const</span> data = <span class="kw">await</span> response.json();</code></pre>
+
+      <p>Five things to notice:</p>
+      <ol>
+        <li><strong>URL</strong> — where the request goes. APIs have many endpoints (URLs) for different actions.</li>
+        <li><strong>Method</strong> — POST here, because we're creating a new completion. (Recall HTTP verbs from 2.1.)</li>
+        <li><strong>Headers</strong> — metadata. <code>Authorization</code> proves who you are. <code>Content-Type</code> says "I'm sending JSON."</li>
+        <li><strong>Body</strong> — the actual data. JSON describing what you want.</li>
+        <li><strong>Response</strong> — also JSON. You "await" because it travels over the network and takes time.</li>
+      </ol>
+
+      <h3>The big risk: API keys</h3>
+      <p>That <code>apiKey</code> variable above? It's a secret that proves you're you, attached to a credit card. <strong>It must never appear in your frontend code</strong>, because anyone using your app could open DevTools and steal it. Two safe patterns:</p>
+      <ul>
+        <li><strong>Environment variables</strong> — store the key in a <code>.env</code> file (never committed to Git) and read it from there server-side.</li>
+        <li><strong>Backend proxy</strong> — your frontend calls <em>your</em> backend, your backend calls OpenAI with the key, returns the result. The key never leaves your server.</li>
+      </ul>
+
+      <p>Lovable, Bolt, Replit have a "Secrets" or "Environment Variables" section. Put your API keys there. AI will know how to use them.</p>
+
+      <h3>Rate limits — every API has them</h3>
+      <p>APIs cap how many requests you can make per minute/hour. If you exceed it, you get <code>429 Too Many Requests</code>. Your app should handle this — usually by waiting and retrying. Ask AI: "add exponential backoff retries for 429 errors."</p>
+
+      <h3>SDKs — easier wrappers</h3>
+      <p>Most big APIs (OpenAI, Anthropic, Stripe, Supabase) provide official SDKs — pre-written code that hides the fetch/headers/JSON detail. The OpenAI call above, using the SDK, becomes:</p>
+      <pre><code><span class="kw">const</span> result = <span class="kw">await</span> openai.chat.completions.create({
+  model: <span class="st">"gpt-5.3"</span>,
+  messages: [{ role: <span class="st">"user"</span>, content: <span class="st">"Write a haiku about cats"</span> }]
+});</code></pre>
+      <p>Cleaner, but same idea underneath. AI defaults to SDKs when they exist.</p>
+
+      <h3>Webhooks — the reverse direction</h3>
+      <p>Normally <em>your</em> app calls an API. A <strong>webhook</strong> is the reverse: an outside service calls <em>your</em> app when something happens. Examples: Stripe webhooks tell your app when a payment succeeds; GitHub webhooks tell your app when someone pushes code.</p>
+
+      <p>You'll set webhooks up by giving the outside service a URL on your server, like <code>https://myapp.com/webhooks/stripe</code>. Modern hosts (Vercel, Render) handle this automatically.</p>
+    </section>
+
+    <!-- 2.8 ENVIRONMENTS -->
+    <section class="chapter" id="ch-2-8">
+      <span class="chapter-num">CHAPTER 2.8 · <span class="lvl lvl-3">L3 Shared</span></span>
+      <h2>Environments &amp; <span class="ital">env variables</span></h2>
+
+      <p>An "environment" is a copy of your app running somewhere. Real apps usually have three:</p>
+
+      <table class="compare-table">
+        <thead><tr><th>Environment</th><th>What it is</th><th>Who uses it</th></tr></thead>
+        <tbody>
+          <tr><td class="tool-col">Development</td><td>Running on your laptop while you build</td><td>You</td></tr>
+          <tr><td class="tool-col">Staging</td><td>Live on the internet but pre-release</td><td>Team / testers</td></tr>
+          <tr><td class="tool-col">Production</td><td>The real app real users use</td><td>The public</td></tr>
+        </tbody>
+      </table>
+
+      <p>You don't need a staging environment for your first apps. But the concept matters because each environment uses <em>different settings</em> — different API keys, different databases, different URLs. That's where env variables come in.</p>
+
+      <h3>Environment variables (env vars)</h3>
+      <p>Variables that exist outside your code, configured per environment. Your code reads them without knowing what's in them. Example:</p>
+      <pre><code><span class="cm">// in your code (same for all environments)</span>
+<span class="kw">const</span> apiKey = process.env.OPENAI_API_KEY;
+<span class="kw">const</span> dbUrl = process.env.DATABASE_URL;</code></pre>
+
+      <p>In development, those come from a <code>.env</code> file on your laptop:</p>
+      <pre><code>OPENAI_API_KEY=sk-test-1234...
+DATABASE_URL=postgresql://localhost/myapp_dev</code></pre>
+
+      <p>In production, they come from your hosting dashboard (Vercel, Render, etc.):</p>
+      <pre><code>OPENAI_API_KEY=sk-prod-real-key...
+DATABASE_URL=postgresql://prod-server.amazonaws.com/myapp</code></pre>
+
+      <h3>The <code>.gitignore</code> file — critical</h3>
+      <p>You <strong>never</strong> commit <code>.env</code> to Git. It contains real secrets. Every project must have a <code>.gitignore</code> file listing what Git should skip:</p>
+      <pre><code><span class="cm"># .gitignore</span>
+.env
+.env.local
+node_modules/
+.DS_Store</code></pre>
+      <p>AI tools create this for you. But always check that <code>.env</code> is listed before pushing to GitHub for the first time.</p>
+
+      <div class="callout danger">
+        <div class="label">If you do leak a key</div>
+        <p>Bots scan public GitHub repos for API keys within seconds. If you accidentally push one, don't just delete the commit — <em>immediately revoke the key</em> in the provider's dashboard and generate a new one. Deleting the commit isn't enough; the leaked version exists in Git history forever and on attackers' computers.</p>
+      </div>
+
+      <h3>Beyond keys: feature flags</h3>
+      <p>Env vars also let you toggle features per environment. E.g. <code>ENABLE_NEW_PRICING=true</code> in staging, <code>false</code> in production. Your code: <code>if (process.env.ENABLE_NEW_PRICING === "true") { ... }</code>. You roll out features safely.</p>
+
+      <p>You don't need this on day one. But by Level 4 (SaaS) you will, and now you know the term.</p>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-1">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Part 1 · Foundations</div>
+      </a>
+      <a class="next" data-goto="p-3">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 3 · Setup</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 3 - SETUP ============== -->
+<div class="pane" id="p-3">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part Three</div>
+      <h1 class="part-title">Setup: <span class="ital">your stack</span> on Windows</h1>
+      <p class="pane-lede">Install once, forget forever. The toolchain every vibe coder needs running underneath everything.</p>
+    </div>
+
+    <section class="chapter" id="ch-3-1">
+      <span class="chapter-num">CHAPTER 3.1 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>Installing your <span class="ital">starter stack</span></h2>
+      <p>Total time: ~30 minutes. After today these are background scenery.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div>
+            <h4>Install Node.js</h4>
+            <p>Go to <a href="https://nodejs.org">nodejs.org</a>, download the "LTS" version (the stable one). Run the installer. Click through. Leave "automatically install necessary tools" checked. This installs Node, npm, and npx all at once.</p>
+            <p><strong>Verify:</strong> Windows key, type <code>powershell</code>, Enter. In the blue window, type <code>node --version</code>. You should see something like <code>v20.11.0</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h4>Install Git</h4>
+            <p>Go to <a href="https://git-scm.com/download/win">git-scm.com/download/win</a>. Download. Run. Defaults are fine. If asked about default editor, pick VS Code if installed, otherwise leave default.</p>
+            <p><strong>Verify:</strong> <code>git --version</code> in PowerShell. <code>git version 2.43.0</code> or similar.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h4>Install VS Code</h4>
+            <p>Go to <a href="https://code.visualstudio.com">code.visualstudio.com</a>. During setup, tick "Add 'Open with Code' action" and "Add to PATH."</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h4>Create a GitHub account</h4>
+            <p><a href="https://github.com">github.com</a>. Pick a username you wouldn't mind on a résumé.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h4>Connect Git to GitHub</h4>
+            <p>In PowerShell:</p>
+<pre><code>git config --global user.name "Your Name"
+git config --global user.email "you@example.com"</code></pre>
+            <p>First time you push, a browser pops up to authorize.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h4>Install Claude Desktop</h4>
+            <p><a href="https://claude.com/download">claude.com/download</a> for Windows. Sign in. This one app contains Chat, Cowork, and Code. Paid plan needed for Cowork/Code.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h4>Sign up for one app-builder</h4>
+            <p>Pick one: <a href="https://lovable.dev">Lovable</a>, <a href="https://bolt.new">Bolt.new</a>, or <a href="https://replit.com">Replit</a>. All free to try. If you can't decide: <strong>Lovable</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="label">PowerShell quick wins</div>
+        <p>Right-click any folder in Windows Explorer → "Open in Terminal" to start in that folder. <code>cd MyProject</code> changes directory. <code>ls</code> lists files. <code>cls</code> clears the screen. That's 90% of PowerShell.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-3-2">
+      <span class="chapter-num">CHAPTER 3.2 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>GitHub without the <span class="ital">headache</span></h2>
+      <p>You met Git in Part 2.5. Here's the practical side: actually using GitHub day to day.</p>
+
+      <h3>The five actions you'll do constantly</h3>
+      <table class="compare-table">
+        <thead><tr><th>Action</th><th>What it does</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td class="tool-col">Clone</td><td>Download an existing repo to your computer</td><td>Starting on an existing project</td></tr>
+          <tr><td class="tool-col">Commit</td><td>Save a snapshot with a description</td><td>After every chunk of work</td></tr>
+          <tr><td class="tool-col">Push</td><td>Upload commits to GitHub</td><td>After committing</td></tr>
+          <tr><td class="tool-col">Pull</td><td>Download new commits from GitHub</td><td>Working from another computer</td></tr>
+          <tr><td class="tool-col">Branch</td><td>Parallel timeline to try something</td><td>Big experiments</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Why this matters for vibe coding</h3>
+      <ol>
+        <li><strong>Backup.</strong> Laptop dies → code is safe on GitHub.</li>
+        <li><strong>Undo.</strong> AI breaks something subtle → roll back to your last commit.</li>
+        <li><strong>Portability.</strong> Lovable, Bolt, Cursor all read from and write to GitHub. Build in Lovable, push to GitHub, keep editing in Cursor. <strong>GitHub is the universal handoff.</strong></li>
+      </ol>
+
+      <div class="callout">
+        <div class="label">The one habit that saves everything</div>
+        <p>Commit and push <em>before</em> asking AI for a big change. If it butchers, one click rolls back. This habit alone prevents 90% of vibe coding disasters.</p>
+      </div>
+
+      <h3>First repo, 60 seconds</h3>
+      <ol>
+        <li>github.com → green "New" button.</li>
+        <li>Name it. Click Create.</li>
+        <li>Copy the URL.</li>
+        <li>In PowerShell: <code>cd Desktop</code> then <code>git clone &lt;URL&gt;</code> then <code>cd my-first-app</code>.</li>
+      </ol>
+
+      <p>Daily rhythm:</p>
+<pre><code>git add .
+git commit -m "Added the login page"
+git push</code></pre>
+    </section>
+
+    <section class="chapter" id="ch-3-3">
+      <span class="chapter-num">CHAPTER 3.3 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>VS Code, the <span class="ital">universal canvas</span></h2>
+
+      <p>Open VS Code. First time: intimidating. Week two: feels like Notepad. The layout:</p>
+      <ul>
+        <li><strong>Left sidebar (icons)</strong> — Files, Search, Source Control (Git), Extensions, Run/Debug.</li>
+        <li><strong>Explorer</strong> — file tree. <em>File → Open Folder</em> to load a project.</li>
+        <li><strong>Editor</strong> — where code lives.</li>
+        <li><strong>Bottom panel</strong> — toggle terminal with <code>Ctrl + `</code> (backtick).</li>
+      </ul>
+
+      <h3>The five extensions worth installing</h3>
+      <div class="tool-grid">
+        <div class="tool-card">
+          <div class="tool-name">Claude Code</div>
+          <p>Official Anthropic extension. AI pair-programmer in VS Code. Free with a paid Claude plan.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">GitHub Copilot</div>
+          <p>AI auto-complete. Free for students with GitHub Education. Suggests code as you type.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">GitLens</div>
+          <p>Beautiful Git history next to each line. See who changed what, when, why.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Prettier</div>
+          <p>Auto-formats code. Set it to run on save. AI sometimes writes messy code; Prettier cleans it.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Live Server</div>
+          <p>One-click preview for plain HTML/CSS/JS. Right-click <code>index.html</code> → "Open with Live Server."</p>
+        </div>
+      </div>
+
+      <p>You'll rarely type code in VS Code by hand. But you'll use it constantly to <em>read</em> what AI made, run it, and commit it.</p>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-2">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Part 2 · Coding Basics</div>
+      </a>
+      <a class="next" data-goto="p-4">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 4 · Tools</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 4 - TOOLS ============== -->
+<div class="pane" id="p-4">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part Four</div>
+      <h1 class="part-title">The <span class="ital">tool</span> landscape</h1>
+      <p class="pane-lede">Every major vibe coding tool, what it's for, who it suits, and which level it belongs at.</p>
+    </div>
+
+    <section class="chapter" id="ch-4-1">
+      <span class="chapter-num">CHAPTER 4.1</span>
+      <h2>The <span class="ital">map</span></h2>
+      <p>Dozens of tools exist. Most are variations on a theme. Here's the honest landscape:</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Tool</th><th>Type</th><th>Best for</th><th>Need coding?</th><th>Level</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tool-col">Lovable</td><td>App builder (browser)</td><td>Full-stack web apps, MVPs</td><td>No</td><td><span class="lvl lvl-2">L1–L4</span></td></tr>
+          <tr><td class="tool-col">Bolt.new</td><td>App builder (browser)</td><td>Quick prototypes, mobile-friendly</td><td>No</td><td><span class="lvl lvl-2">L1–L3</span></td></tr>
+          <tr><td class="tool-col">Replit</td><td>Cloud IDE + builder</td><td>All-in-one: build, host, collaborate</td><td>Helpful</td><td><span class="lvl lvl-2">L1–L4</span></td></tr>
+          <tr><td class="tool-col">v0 (Vercel)</td><td>UI generator</td><td>Beautiful frontends only</td><td>Helps</td><td><span class="lvl lvl-2">L2–L4</span></td></tr>
+          <tr><td class="tool-col">Claude Cowork</td><td>Desktop agent</td><td>Files, research, automation</td><td>No</td><td><span class="lvl lvl-1">L1–L2</span></td></tr>
+          <tr><td class="tool-col">Claude Code</td><td>AI coding agent</td><td>Real codebases</td><td>Eventually yes</td><td><span class="lvl lvl-3">L3–L5</span></td></tr>
+          <tr><td class="tool-col">Cursor</td><td>IDE (VS Code fork)</td><td>Coding with strong AI</td><td>Yes</td><td><span class="lvl lvl-3">L3–L5</span></td></tr>
+          <tr><td class="tool-col">Antigravity</td><td>Agentic IDE (Google)</td><td>Multi-agent, browser automation</td><td>Helpful</td><td><span class="lvl lvl-3">L3–L5</span></td></tr>
+          <tr><td class="tool-col">Windsurf</td><td>Agentic IDE</td><td>Cascade Flow features</td><td>Yes</td><td><span class="lvl lvl-3">L3–L5</span></td></tr>
+          <tr><td class="tool-col">OpenAI Codex</td><td>Agent (app + CLI + IDE)</td><td>Background tasks, parallel agents</td><td>Yes</td><td><span class="lvl lvl-3">L3–L5</span></td></tr>
+          <tr><td class="tool-col">GitHub Copilot</td><td>Editor plug-in</td><td>Smart autocomplete</td><td>Yes</td><td><span class="lvl lvl-3">L2–L5</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>The recommended journey</h3>
+      <div class="timeline">
+        <div class="tl-item"><h4>Week 1 — Lovable or Bolt <span class="lvl lvl-1">L1</span></h4><p>Build your first working web app by chatting. No setup. See an idea become a real thing live on the internet.</p></div>
+        <div class="tl-item"><h4>Week 2 — GitHub + VS Code <span class="lvl lvl-1">L1</span></h4><p>Push your app to GitHub. Open in VS Code. Just look. Don't edit. Get fluent reading code on your machine.</p></div>
+        <div class="tl-item"><h4>Week 3 — Claude Cowork <span class="lvl lvl-2">L2</span></h4><p>Automate boring research and document tasks. Learn to talk to an agent without coding pressure.</p></div>
+        <div class="tl-item"><h4>Week 4 — Claude Code <span class="lvl lvl-2">L2</span></h4><p>Open your Lovable project. Ask Claude Code to modify it. First real agentic coding on a real codebase.</p></div>
+        <div class="tl-item"><h4>Week 5–6 — Antigravity or Cursor <span class="lvl lvl-3">L3</span></h4><p>Switch to a full agentic IDE. Build something more ambitious from scratch. Try multiple agents at once.</p></div>
+        <div class="tl-item"><h4>Week 7+ — Mix and match <span class="lvl lvl-4">L4</span></h4><p>Lovable for the first draft, GitHub to move it, Antigravity for serious editing, Codex for background tasks. How working vibe coders operate.</p></div>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-4-2">
+      <span class="chapter-num">CHAPTER 4.2 · <span class="lvl lvl-1">L1–L2</span></span>
+      <h2>Claude <span class="ital">Cowork</span></h2>
+      <p>Cowork is Anthropic's "Claude Code for non-coders." Lives inside Claude Desktop as a tab next to Chat and Code. You point it at a folder, describe an outcome — <em>"organize my Downloads, file receipts by month, summarize all PDFs in here"</em> — and Cowork plans the steps, runs them in a sandboxed VM, delivers finished files.</p>
+
+      <h3>What Cowork is good at</h3>
+      <ul>
+        <li><strong>File organization</strong> — "sort my Downloads folder by type and date"</li>
+        <li><strong>Research compilation</strong> — "read these 15 PDFs and write me a memo"</li>
+        <li><strong>Document drafting</strong> — "use these sources to draft a quarterly report in Word"</li>
+        <li><strong>Data extraction</strong> — "pull totals from these receipt screenshots into a spreadsheet"</li>
+        <li><strong>Scheduled tasks</strong> — <code>/schedule</code> for recurring jobs (daily briefings, weekly summaries)</li>
+        <li><strong>Computer use</strong> — Cowork can take over mouse/keyboard for apps without integrations (with per-app permission)</li>
+      </ul>
+
+      <h3>Your first Cowork session</h3>
+      <div class="steps">
+        <div class="step"><div><h4>Open Claude Desktop, click the Cowork tab</h4><p>Three tabs at the top: Chat, Cowork, Code.</p></div></div>
+        <div class="step"><div><h4>Tick "Work in a Folder" and pick one</h4><p>Start low-stakes — receipts, a Downloads cleanup, sample data. Cowork asks permission to read/edit/delete.</p></div></div>
+        <div class="step"><div><h4>Describe the outcome, not the steps</h4><p><em>"Group all files in this folder into subfolders by year-month based on file date. For PDFs without a clear date, open them and use the date inside the document."</em></p></div></div>
+        <div class="step"><div><h4>Review the plan, then approve</h4><p>Cowork shows what it intends to do before doing it.</p></div></div>
+        <div class="step"><div><h4>Walk away</h4><p>Keep Claude Desktop open. You can message from your phone (mobile app) and pick up where you left off. <strong>Don't close the app mid-task.</strong></p></div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="label">Safety note</div>
+        <p>Cowork can delete files. It asks first, but real deletes are real. Back up the folder, or test on a copy. Same for computer use — start with trusted apps, watch the first sessions, never use it for banking or medical records.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-4-3">
+      <span class="chapter-num">CHAPTER 4.3 · <span class="lvl lvl-3">L2–L5</span></span>
+      <h2>Claude <span class="ital">Code</span></h2>
+      <p>Claude Code is Cowork's coding-focused sibling. Same brain, specialized for code projects. Three flavors:</p>
+      <ul>
+        <li><strong>Desktop tab</strong> — inside Claude Desktop, friendliest entry point.</li>
+        <li><strong>CLI</strong> — terminal tool. Power-user. Skip for now.</li>
+        <li><strong>VS Code extension</strong> — Claude embedded inside VS Code.</li>
+      </ul>
+
+      <h3>Code vs Cowork</h3>
+      <table class="compare-table">
+        <thead><tr><th></th><th>Cowork</th><th>Claude Code</th></tr></thead>
+        <tbody>
+          <tr><td class="tool-col">Mental model</td><td>Knowledge worker delegating</td><td>Pair-programmer editing with you</td></tr>
+          <tr><td class="tool-col">Permissions</td><td>"Work in a Folder" + per-app</td><td>Reviews each file edit with a diff</td></tr>
+          <tr><td class="tool-col">Environment</td><td>Sandboxed VM</td><td>Your real files (or cloud VM)</td></tr>
+          <tr><td class="tool-col">Best for</td><td>Docs, files, research, automation</td><td>Building &amp; modifying software</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Your first Claude Code session</h3>
+      <ol>
+        <li>Claude Desktop → Code tab.</li>
+        <li>"Local" + choose a folder. Even an empty one is fine.</li>
+        <li>Starts in <em>Ask permissions mode</em>: Claude proposes every change, shows a diff (added in green, removed in red), waits for Accept or Reject. <strong>Stay in this mode for your first month.</strong></li>
+        <li>Try: <em>"Create a simple landing page with a headline, paragraph, and CTA button. Use Tailwind CSS. Mobile-friendly."</em></li>
+        <li>Approve each change. Read the diffs. Get fluent through exposure.</li>
+      </ol>
+
+      <div class="callout tip">
+        <div class="label">CLAUDE.md — the magic file</div>
+        <p>Create <code>CLAUDE.md</code> in your project root. Whatever you write becomes Claude Code's standing instructions for that project. <em>"Always use TypeScript. Don't write tests unless asked. Comments should be brief."</em> Single file, huge consistency boost.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-4-4">
+      <span class="chapter-num">CHAPTER 4.4 · <span class="lvl lvl-3">L3–L5</span></span>
+      <h2>Google <span class="ital">Antigravity</span></h2>
+      <p>Google's agentic IDE, launched late 2025, now free. A fork of VS Code — identical look and feel, but with AI baked in. Powered by Gemini 3 Pro, optional Claude Sonnet 4.5 and GPT-OSS. Big differentiator: <strong>multiple agents working in parallel, with a built-in browser they can drive themselves.</strong></p>
+
+      <h3>What makes Antigravity unusual</h3>
+      <ul>
+        <li><strong>Agent Manager</strong> — dashboard for several agents on the same project. One researches APIs, another builds UI, a third writes docs.</li>
+        <li><strong>Built-in Chrome browser</strong> — agents click around your app like a user, take screenshots, verify their work behaves correctly.</li>
+        <li><strong>Artifacts</strong> — agents produce Markdown files documenting plan, progress, summary. You read them to follow along or audit later.</li>
+        <li><strong>Free tier is generous</strong> — Pro/Ultra tiers exist for higher rate limits.</li>
+        <li><strong>Imports from VS Code</strong> — settings, extensions, keybindings carry over.</li>
+      </ul>
+
+      <h3>Getting started</h3>
+      <div class="steps">
+        <div class="step"><div><h4>Download from antigravity.google</h4><p>Windows installer. Sign in with Google.</p></div></div>
+        <div class="step"><div><h4>Pick agent-first mode</h4><p>At first launch you'll see agent-first / AI-assisted / traditional. Beginner: <strong>agent-first</strong>. Agent Manager front and center.</p></div></div>
+        <div class="step"><div><h4>Create your first project</h4><p>File → Open Folder → create a new folder. Empty project ready.</p></div></div>
+        <div class="step"><div><h4>Give a high-level goal</h4><p><em>"Build a habit tracker web app. Users sign up, add daily habits with icons, see a calendar view with streaks. Use React, Tailwind, Supabase. Set up from scratch."</em> Approve the plan.</p></div></div>
+        <div class="step"><div><h4>Multi-agent magic (optional)</h4><p>Click "Add agent" in Agent Manager. Give the second a parallel job: <em>"Design a logo."</em> Both run side by side.</p></div></div>
+      </div>
+
+      <h3>The <code>.agent</code> folder and GEMINI.md</h3>
+      <p>Antigravity adds a hidden <code>.agent</code> folder with rules, skills, workflows. A <code>GEMINI.md</code> file (their version of CLAUDE.md) for project-level instructions. Don't touch on day one. Day thirty you'll be editing these to teach agents how your project works.</p>
+
+      <div class="callout">
+        <div class="label">Antigravity vs Cursor in one line</div>
+        <p>Cursor optimizes for the developer typing alongside the AI. Antigravity optimizes for the developer delegating to multiple AIs at once. Supervisor vs collaborator.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-4-5">
+      <span class="chapter-num">CHAPTER 4.5 · <span class="lvl lvl-3">L3–L5</span></span>
+      <h2>OpenAI <span class="ital">Codex</span></h2>
+      <p>Started May 2025 as OpenAI's cloud coding agent. As of 2026: full suite — desktop app (Mac &amp; Windows), CLI, VS Code extension, web — all sharing one agent through your ChatGPT account. Latest model: GPT-5.3-Codex, optimized for coding and computer-use tasks.</p>
+
+      <h3>What Codex does differently</h3>
+      <ul>
+        <li><strong>Parallel agents in worktrees</strong> — fire off 3-10 tasks at once, each in an isolated copy of your code.</li>
+        <li><strong>Background tasks</strong> — queue tasks before coffee, return to finished pull requests. The "morning queue" workflow is hugely popular.</li>
+        <li><strong>In-app browser</strong> — like Antigravity. You can comment directly on a rendered web page: <em>"this button should be bigger and live top-right."</em></li>
+        <li><strong>Memory</strong> — Codex remembers your preferences: libraries, naming, where your dev server runs.</li>
+        <li><strong>90+ plugins</strong> — Jira, GitHub, GitLab, Figma, Linear, Vercel, Cloudflare, Render, Netlify. Codex can deploy your app to any.</li>
+        <li><strong>Skills</strong> — bundles teaching Codex how to do specific things. Figma-to-code? Install the Figma skill.</li>
+      </ul>
+
+      <h3>Starting with Codex</h3>
+      <ol>
+        <li>ChatGPT subscription (Plus, Pro, Business, Enterprise). Free/Go have limited access.</li>
+        <li>Install desktop app from <a href="https://openai.com/codex/">openai.com/codex</a>.</li>
+        <li>New project → local folder or GitHub repo.</li>
+        <li>Plain-English task: <em>"Add dark mode. Toggle in top-right, remember user's choice."</em></li>
+        <li>Codex makes a worktree, works 1-30 min, posts a diff. You review.</li>
+      </ol>
+
+      <h3>Codex vs Antigravity</h3>
+      <p>They overlap a lot. Differences in practice:</p>
+      <ul>
+        <li><strong>Codex</strong> if you already pay for ChatGPT, want the strongest parallel-task workflow, like the background queue model.</li>
+        <li><strong>Antigravity</strong> if you want free, prefer Gemini 3, or want browser-driving as a primary feature.</li>
+        <li><strong>Both</strong> if you can afford it — they coexist fine.</li>
+      </ul>
+    </section>
+
+    <section class="chapter" id="ch-4-6">
+      <span class="chapter-num">CHAPTER 4.6 · <span class="lvl lvl-1">L1–L4</span></span>
+      <h2>App builders: <span class="ital">Lovable, Bolt, Replit, v0</span></h2>
+      <p>The friendliest entry points for zero coding experience. Browser-based. You chat, an app appears, you publish.</p>
+
+      <h3>Lovable</h3>
+      <p><strong>Best for</strong>: non-technical founders building their first full-stack web app. Opinionated stack (React + Tailwind + Supabase) — a feature for beginners. Strong visual preview, two-way GitHub sync, Stripe payments baked in.</p>
+      <p><strong>Pricing</strong>: free tier with limits, paid from $20/month.</p>
+      <p><strong>Watch out</strong>: Lovable will build apps with weak DB security if you don't ask. Always include "use Supabase Row Level Security."</p>
+
+      <h3>Bolt.new</h3>
+      <p><strong>Best for</strong>: quick prototypes, single-page apps, mobile apps via Expo. Two AI agents: Claude (reliable) and v1 (faster/cheaper). Imports from Lovable.</p>
+      <p><strong>Pricing</strong>: token-based, can be opaque. Daily free allotment.</p>
+      <p><strong>Watch out</strong>: token cost scales with codebase size. Same edit costs more at week 6 than week 1.</p>
+
+      <h3>Replit</h3>
+      <p><strong>Best for</strong>: everything-in-one — coding, AI, database, hosting, mobile preview. Replit Agent generates and deploys from the same browser tab. 50+ languages.</p>
+      <p><strong>Pricing</strong>: free tier (30-day published apps), $20/mo Core, $40/mo Teams.</p>
+      <p><strong>Watch out</strong>: more technical complexity visible than Lovable. Real folder structures.</p>
+
+      <h3>v0 (Vercel)</h3>
+      <p><strong>Best for</strong>: gorgeous frontends. Exceptional UI generation, no real backend — pair with Supabase if you need data. One-click Vercel deploy.</p>
+      <p><strong>Pricing</strong>: generous free, $20/mo+.</p>
+      <p><strong>Watch out</strong>: you'll need your own backend layer for anything beyond static.</p>
+
+      <h3>How to pick today</h3>
+      <p>For full-stack web apps with logins, databases, payments → <strong>Lovable</strong>. Most direct path. Migrate later if needed.</p>
+
+      <div class="callout tip">
+        <div class="label">The pro pattern</div>
+        <p>Start in Lovable until you hit a wall. Connect to GitHub. Pull into VS Code or Antigravity or Cursor. Continue from the agentic IDE. The single most common path from "first app" to "shipping serious software."</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-4-7">
+      <span class="chapter-num">CHAPTER 4.7 · <span class="lvl lvl-4">L3–L5</span></span>
+      <h2>Cursor &amp; <span class="ital">Windsurf</span></h2>
+      <p>Direct competitors, look almost identical: VS Code forks with AI-first design. Used once you're past "just build it for me" and want tight control.</p>
+
+      <h3>Cursor</h3>
+      <p>Most beloved AI IDE among working developers in 2026. Three modes: <strong>Composer</strong> (multi-file via chat), <strong>Agent</strong> (autonomous), <strong>Edit</strong> (precise single-spot). Bugbot for automated review. Cloud Background Agents. Pro $20/mo.</p>
+
+      <h3>Windsurf</h3>
+      <p>Built around <strong>Cascade Flow</strong> — single chat where agent handles whole features with previews and deploys. Excellent Rules and Memory features. MCP integration strong. Free preview, paid comparable to Cursor.</p>
+
+      <p>For your stage right now, you don't need either. Antigravity covers similar ground for free. Cursor and Windsurf become attractive once you're shipping real code daily.</p>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-3">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Part 3 · Setup</div>
+      </a>
+      <a class="next" data-goto="p-5">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 5 · Building</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 5 - BUILDING ============== -->
+<div class="pane" id="p-5">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part Five</div>
+      <h1 class="part-title">Building: <span class="ital">workflow</span>, prompts, projects</h1>
+      <p class="pane-lede">The rhythm every vibe coder follows. The prompting tricks that actually work. Three real projects you can ship this week.</p>
+    </div>
+
+    <section class="chapter" id="ch-5-1">
+      <span class="chapter-num">CHAPTER 5.1</span>
+      <h2>The build <span class="ital">workflow</span></h2>
+      <p class="intro-para"><span class="drop">E</span>very serious vibe coder follows the same loop, whether in Lovable on a browser or Antigravity on a desktop. Learn this rhythm and you'll never feel lost.</p>
+
+      <div class="flow">
+        <div class="flow-box"><div class="flow-title">1. Spec</div>Write what you want in plain language.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">2. Generate</div>Let the AI make a first version.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">3. Run</div>See if it works. Click around.</div>
+      </div>
+      <div class="flow">
+        <div class="flow-box"><div class="flow-title">4. Critique</div>Note what's wrong.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">5. Iterate</div>Ask AI to fix one thing.</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="flow-title">6. Commit</div>Save to Git. Back to step 3.</div>
+      </div>
+
+      <h3>The cardinal rule: small steps, frequent commits</h3>
+      <p>Biggest beginner mistake: too much at once. <em>"Build a complete Instagram clone with stories, DMs, and reels"</em> produces a janky mess that's hard to fix. <em>"Build a single page where users sign up and log in"</em> works beautifully.</p>
+      <p>After it works, commit. Next slice: <em>"Now a page where logged-in users upload a photo and see all their uploads."</em> Commit. Repeat.</p>
+
+      <div class="pullquote">
+        Ten small commits beat one giant generation every time. When something breaks, you can roll back five minutes — not five days.
+        <cite>The rule every vibe coder learns the hard way</cite>
+      </div>
+
+      <h3>The 80/20 of avoiding agent disasters</h3>
+      <ol>
+        <li><strong>Commit before any big ask.</strong> Always.</li>
+        <li><strong>Stay in "Ask permissions" mode</strong> in Claude Code, Cursor, Antigravity. Watch the diffs. You'll learn what good code looks like by osmosis.</li>
+        <li><strong>If the AI is in a doom loop</strong> (same fix five times, getting worse), <em>stop it</em>. Roll back. Start fresh with a tighter prompt.</li>
+        <li><strong>When debugging, share the exact error</strong>, not your interpretation.</li>
+        <li><strong>Periodically ask AI to summarize what it's done.</strong> Forces a re-read; catches drift.</li>
+      </ol>
+    </section>
+
+    <section class="chapter" id="ch-5-2">
+      <span class="chapter-num">CHAPTER 5.2</span>
+      <h2>Prompting <span class="ital">like a pro</span></h2>
+      <p>Your prompts are the source code of vibe coding. A great prompt turns a 30-minute mess into a 30-second build.</p>
+
+      <div class="prompt-box">
+        <div class="prompt-label">The four-part prompt</div>
+        <p>
+          <strong>Context:</strong> "I'm building a habit tracker for myself."<br>
+          <strong>Goal:</strong> "Right now I need sign-up and login."<br>
+          <strong>Constraints:</strong> "Supabase auth. Email + password. Tailwind. Minimal — one column, centered, no animations."<br>
+          <strong>Acceptance:</strong> "Done when I can sign up, log out, log back in, session persists through refresh."
+        </p>
+      </div>
+      <p>That prompt produces something usable on first try about 80% of the time. Compare to <em>"make a login page lol"</em> — which leaves ten things to guess.</p>
+
+      <h3>Eleven prompting tricks that punch above their weight</h3>
+      <ul>
+        <li><strong>Show, don't just tell.</strong> "Make it look like Linear.app's homepage" beats "make it modern."</li>
+        <li><strong>Specify the stack.</strong> "Use React, Tailwind, Supabase, no other libraries."</li>
+        <li><strong>Define the data shape.</strong> "Habits have a name, icon, color, and a daily log of timestamps."</li>
+        <li><strong>State what NOT to do.</strong> "Don't add comments. Don't write tests yet. Don't touch other pages."</li>
+        <li><strong>Ask for a plan first.</strong> "Before writing code, describe in 3-5 bullets what you'll do and which files you'll touch."</li>
+        <li><strong>Reference existing code.</strong> "Mimic the pattern from the Habits page when building Goals."</li>
+        <li><strong>Tell it what good looks like.</strong> "Mobile-first. WCAG-AA contrast. Loads in under 2 seconds."</li>
+        <li><strong>Use Markdown structure.</strong> Bullets and headings in your prompt make AI follow instructions more reliably than walls of text.</li>
+        <li><strong>Be explicit about edge cases.</strong> "What if the user has no habits yet? Show empty state with a button to add the first."</li>
+        <li><strong>Ask for verification.</strong> "After you're done, walk through the user flow step by step." Antigravity and Codex will literally drive their browser to do this.</li>
+        <li><strong>End with success criteria.</strong> "Don't mark complete until X, Y, Z all pass."</li>
+      </ul>
+
+      <h3>Three back-pocket prompts</h3>
+      <div class="prompt-box">
+        <div class="prompt-label">When stuck</div>
+        <p>"Stop what you're doing. Read the entire codebase. Describe in plain English what this app does and how the pieces fit. Then propose three different approaches to solve [problem]. Don't write code yet."</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">When AI keeps making the same mistake</div>
+        <p>"You've tried [X] three times and it keeps failing because [Y]. Forget that approach entirely. What's a completely different way to achieve the goal?"</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">Add a feature without breaking anything</div>
+        <p>"I want to add [feature]. First, list every file you'll need to change and why. Show me the list. Don't change anything until I approve. After I approve, make changes one file at a time and pause between files."</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-5-3">
+      <span class="chapter-num">CHAPTER 5.3 · <span class="lvl lvl-2">L2–L4</span></span>
+      <h2>Project: a real <span class="ital">web app</span></h2>
+      <p>Time to ship something. A habit tracker — small, useful, every piece of a real app: signup/login, database, UI, deployment. Two paths.</p>
+
+      <h3>Path A — Lovable (45 minutes start to finish) <span class="lvl lvl-2">L2</span></h3>
+      <div class="steps">
+        <div class="step"><div><h4>Open lovable.dev → "Create new project"</h4><p>Sign in with Google or GitHub.</p></div></div>
+        <div class="step"><div><h4>First prompt (use four-part structure)</h4>
+          <div class="prompt-box">
+            <div class="prompt-label">Initial prompt</div>
+            <p>I'm building a personal habit tracker called "Daily." Build the first version with: (1) email + password sign-up and login using Supabase auth, with Row Level Security on. (2) After login, a dashboard showing today's habits as cards. (3) Each card has habit name, an icon, and a big checkbox. (4) A "+ New Habit" button opens a modal with fields for name, icon (emoji picker), and color. (5) A calendar view tab showing completed habits across the month. Use React, Tailwind, clean minimal design with lots of whitespace. Mobile-first. Done when I can sign up, log in, add a habit, check it off, and refresh without losing state.</p>
+          </div>
+        </div></div>
+        <div class="step"><div><h4>Watch Lovable build</h4><p>Preview pane on the right. 2-4 minutes. Try it.</p></div></div>
+        <div class="step"><div><h4>Iterate in small steps</h4><p>First-try issues: contrast, spacing, error messages, empty states. One fix at a time. <em>"The empty state is too plain. Add an illustration and a friendlier CTA."</em></p></div></div>
+        <div class="step"><div><h4>Connect GitHub</h4><p>Click the GitHub button at the top of Lovable. Authorize. Project pushed to a new repo.</p></div></div>
+        <div class="step"><div><h4>Publish</h4><p>Click "Publish." Public URL: <code>daily-habits.lovable.app</code>. Share. Done.</p></div></div>
+      </div>
+
+      <h3>Path B — Antigravity (a few hours, fully yours) <span class="lvl lvl-3">L3</span></h3>
+      <p>More to learn, but you fully control the result.</p>
+      <ol>
+        <li>Empty folder. Open in Antigravity.</li>
+        <li>In agent chat: set up React + Vite with Tailwind and Supabase.</li>
+        <li>Approve each step. Antigravity runs <code>npm</code> commands in its terminal.</li>
+        <li>Same habit-tracker spec as Path A.</li>
+        <li>Optional: add a second agent to design a logo while the first builds.</li>
+        <li>Push to GitHub from Source Control sidebar.</li>
+        <li>Deploy to Vercel: connect Vercel to your GitHub repo, Import, auto-detects Vite/React, deploys. Every push auto-deploys after.</li>
+      </ol>
+
+      <div class="callout">
+        <div class="label">What you'll have learned</div>
+        <p>By the time the habit tracker is live, you've touched: app builder OR agentic IDE, Git/GitHub, a database (Supabase), authentication, hosting (Lovable's or Vercel's), and a real domain. You now understand more about how apps work than most people who tried to "learn to code" in 2023.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-5-4">
+      <span class="chapter-num">CHAPTER 5.4 · <span class="lvl lvl-2">L2–L4</span></span>
+      <h2>Project: an <span class="ital">AI agent</span></h2>
+      <p>An "AI agent" is a program that takes actions on your behalf. Not just a chatbot — it reads emails, posts to Slack, summarizes documents, makes decisions. Three approaches, ordered easy to powerful.</p>
+
+      <h3>Approach 1 — Cowork scheduled tasks <span class="lvl lvl-1">L1</span></h3>
+      <p>The simplest "agent" is a recurring Cowork task. Open Cowork, type <code>/schedule</code>, define: <em>"Every morning at 7am, read the news sites in my bookmarks folder, summarize the 5 most important AI stories into a Markdown file in Documents/Daily-Briefings/, and email it to me."</em></p>
+      <p>Cowork executes on the schedule as long as your computer's on. No code. Just a brief once.</p>
+
+      <h3>Approach 2 — Agent app in Lovable or Bolt <span class="lvl lvl-3">L3</span></h3>
+      <p>When others use your agent (not just you), wrap it in an app. Example: paste a YouTube URL, get back AI-generated flashcards.</p>
+      <div class="prompt-box">
+        <div class="prompt-label">Sample prompt for Lovable</div>
+        <p>Build "Notetaker" — paste a YouTube link, get AI flashcards. Supabase auth. Home page: single URL input and Generate button. On click: fetch transcript with youtube-transcript library, send to OpenAI API (I'll add my key as env variable) with a prompt asking for 10 flashcards in JSON, display as flippable cards. Save to user's account for later. Tailwind, minimal, dark mode default.</p>
+      </div>
+      <p>Key piece: the AI <strong>API key</strong>. Sign up at <a href="https://platform.openai.com">platform.openai.com</a> or <a href="https://console.anthropic.com">console.anthropic.com</a>, generate a key, add to your Lovable project's Environment Variables. Treat it like a credit card.</p>
+
+      <h3>Approach 3 — Multi-step agents in Claude Code or Antigravity <span class="lvl lvl-4">L4</span></h3>
+      <p>For agents that do multiple things in sequence (read files, browse, write reports, send results), agentic IDEs shine. Common pattern:</p>
+      <ol>
+        <li>New folder. Open in Claude Code.</li>
+        <li><em>"Build a Python script that takes a CSV of competitor URLs, visits each, extracts pricing, outputs a comparison spreadsheet."</em></li>
+        <li>Claude writes the script, runs it on test data, fixes errors itself, shows you results.</li>
+        <li>Schedule it weekly via Windows Task Scheduler, or trigger manually.</li>
+      </ol>
+
+      <div class="callout tip">
+        <div class="label">MCP — the magic word for serious agents</div>
+        <p>Model Context Protocol (MCP) is an open standard from Anthropic. It lets your AI tools plug into Slack, Notion, Gmail, your CRM. Cowork, Claude Code, Codex, Antigravity all speak MCP. When building agents, tell AI "use the Slack MCP" or "use the Notion MCP" — it'll know what to do.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-5-5">
+      <span class="chapter-num">CHAPTER 5.5 · <span class="lvl lvl-1">L1–L4</span></span>
+      <h2>Project: a <span class="ital">game</span></h2>
+      <p>Games are great for vibe coding because they're visual and immediate. Most run in a browser without a backend. Three flavors:</p>
+
+      <h3>Flavor 1 — Browser game in pure HTML/JS <span class="lvl lvl-1">L1</span></h3>
+      <p>Easiest path. In Claude Code (Desktop tab) or Lovable, prompt:</p>
+      <div class="prompt-box">
+        <div class="prompt-label">2D arcade game</div>
+        <p>Build a single-file HTML game called "Pixel Pop." 2D arcade: player controls a paddle at the bottom, bubbles fall from the top in random colors. Paddle catches a bubble = it pops with particle effect, points by color (red=1, yellow=3, blue=5). Game ends when 3 bubbles touch ground. HTML5 Canvas. Score top-right, lives top-left. Restart button after game over. No external libraries.</p>
+      </div>
+      <p>Result: single <code>.html</code> file. Open in your browser. Drag into VS Code to look at the code. Drag into Lovable to publish online.</p>
+
+      <h3>Flavor 2 — 2D/3D with game frameworks <span class="lvl lvl-2">L2</span></h3>
+      <p>For richer games:</p>
+      <ul>
+        <li><strong>Phaser</strong> — battle-tested 2D framework. Platformers, puzzles, top-down.</li>
+        <li><strong>Three.js</strong> — 3D in the browser. Genuinely impressive 3D experiences ship with it.</li>
+        <li><strong>Pixi.js</strong> — fast 2D for retro/pixel styles.</li>
+      </ul>
+      <p>Prompt: <em>"Build a Mario-style platformer using Phaser 3. Arrow keys to run, space to jump. Three levels, different backgrounds. Coins, enemies, a flag at the end."</em></p>
+
+      <h3>Flavor 3 — Multiplayer game <span class="lvl lvl-4">L4</span></h3>
+      <p>Multiplayer adds a backend. The shape:</p>
+      <ol>
+        <li>Build single-player first. Get it perfect.</li>
+        <li>Add Supabase auth so players have identities.</li>
+        <li>Add a "lobbies" table. Use Supabase real-time subscriptions so all players see updates instantly.</li>
+        <li>Track each player's position/state in the database. Frontend reads from it constantly.</li>
+      </ol>
+      <p>Real challenge. Save it for month two or three. Possible with the same prompt-driven workflow.</p>
+
+      <div class="callout tip">
+        <div class="label">Where vibe coding shines for games</div>
+        <p>Generative art, weekend game jams, gift games for friends, prototypes to validate an idea. The 2026 OpenAI Codex demo of building a complete racing game with 8 maps in a few hours wasn't a stunt — that's a normal output now.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-5-6">
+      <span class="chapter-num">CHAPTER 5.6 · <span class="lvl lvl-2">L2–L4</span></span>
+      <h2>Mobile versions of your <span class="ital">web apps</span></h2>
+      <p>Three real options, easiest to hardest.</p>
+
+      <h3>Option 1 — Responsive design (free, instant) <span class="lvl lvl-1">L1</span></h3>
+      <p>Modern app builders produce <em>responsive</em> web apps by default. They auto-adapt to phone screens. Users visit on phone, it works. Done. For 80% of apps, ship this first.</p>
+      <p>To make sure responsiveness is solid, after every feature: <em>"Test this on a 375px-wide viewport. Fix any layout issues. Whole interface should be thumb-reachable."</em></p>
+
+      <h3>Option 2 — PWA (Progressive Web App) <span class="lvl lvl-3">L3</span></h3>
+      <p>Users can "install" your web app to home screen like a native app. Works offline. Can send notifications. Almost no code changes — just a manifest file and a service worker.</p>
+      <p>Prompt: <em>"Turn this app into a PWA. Add a manifest with icons, enable installability, and cache the main pages for offline use."</em></p>
+
+      <h3>Option 3 — Native mobile via Expo <span class="lvl lvl-4">L4</span></h3>
+      <p>When you truly need App Store or Play Store: <strong>Expo</strong> + <strong>React Native</strong>. Bolt.new produces these directly. Lovable too with the right prompt. The same React skills translate.</p>
+      <p>Warning: App Store requires Apple's developer program ($99/year), code-signing, review delays. Save until you have an app that needs it.</p>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-4">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Part 4 · Tools</div>
+      </a>
+      <a class="next" data-goto="p-6">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 6 · Levels</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 6 - LEVELS ============== -->
+<div class="pane" id="p-6">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part Six</div>
+      <h1 class="part-title">The <span class="ital">five levels</span> of vibe coding</h1>
+      <p class="pane-lede">From "ten lines of HTML in a browser" to "real users, real revenue, real responsibility." A concrete project at every level, plus what you need to know to operate there.</p>
+    </div>
+
+    <section class="chapter" id="ch-6-1">
+      <span class="chapter-num">CHAPTER 6.1</span>
+      <h2>The level <span class="ital">map</span></h2>
+      <p>Five levels. They group into three broad bands you saw in the intro:</p>
+
+      <div class="bands">
+        <div class="band">
+          <div class="band-header">Beginner</div>
+          <div class="band-sub">First 30 days</div>
+          <p>Learn the loop. Tiny apps that solve one problem for one person — you.</p>
+          <div class="levels-included">
+            <span class="lvl lvl-1">L1 Toy</span>
+            <span class="lvl lvl-2">L2 Personal</span>
+          </div>
+        </div>
+        <div class="band">
+          <div class="band-header">Intermediate</div>
+          <div class="band-sub">Months 2–6</div>
+          <p>Ship a real app for other people. Handle logins, databases, deployment. Recognize when AI goes off the rails.</p>
+          <div class="levels-included">
+            <span class="lvl lvl-3">L3 Shared</span>
+            <span class="lvl lvl-4">L4 SaaS</span>
+          </div>
+        </div>
+        <div class="band">
+          <div class="band-header">Advanced</div>
+          <div class="band-sub">6 months +</div>
+          <p>Things real users pay for. Security, performance, monitoring. Read code well enough to override AI when needed.</p>
+          <div class="levels-included">
+            <span class="lvl lvl-5">L5 Production</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lvl-grid">
+        <div class="lvl-row l1">
+          <div class="lvl-num-big">01</div>
+          <div class="lvl-content">
+            <h4>Toy <span class="lvl lvl-1">L1</span></h4>
+            <p>Single-file experiments. Lives in a browser tab. No database, no login, no deploy. Goal: get comfortable with the spec → generate → run → iterate loop.</p>
+            <p><strong>Examples:</strong> a calculator, a Pomodoro timer, a single-page game, a static portfolio, a color palette generator.</p>
+          </div>
+        </div>
+        <div class="lvl-row l2">
+          <div class="lvl-num-big">02</div>
+          <div class="lvl-content">
+            <h4>Personal tool <span class="lvl lvl-2">L2</span></h4>
+            <p>An app for an audience of one — you. Saves your data, runs on the internet so you can use it on your phone. No accounts because there's only one user.</p>
+            <p><strong>Examples:</strong> a private habit tracker, a daily journal app, a recipe vault, a "things I learned today" log, a personal expense tracker.</p>
+          </div>
+        </div>
+        <div class="lvl-row l3">
+          <div class="lvl-num-big">03</div>
+          <div class="lvl-content">
+            <h4>Shared app <span class="lvl lvl-3">L3</span></h4>
+            <p>Other people use it. Real logins. Privacy matters. Free to use. You're not charging, but the consequences of a bug are real.</p>
+            <p><strong>Examples:</strong> a tool for your team or club, an open community app, a free AI utility (YouTube → flashcards), a free game with leaderboards.</p>
+          </div>
+        </div>
+        <div class="lvl-row l4">
+          <div class="lvl-num-big">04</div>
+          <div class="lvl-content">
+            <h4>SaaS / paid product <span class="lvl lvl-4">L4</span></h4>
+            <p>People pay. Stripe wired up. Customer support exists. Security audited. You think about scaling and reliability.</p>
+            <p><strong>Examples:</strong> a $9/mo writing tool, an indie B2B dashboard, a subscription game, a marketplace.</p>
+          </div>
+        </div>
+        <div class="lvl-row l5">
+          <div class="lvl-num-big">05</div>
+          <div class="lvl-content">
+            <h4>Production-grade <span class="lvl lvl-5">L5</span></h4>
+            <p>Hundreds-to-millions of users. Monitoring, error tracking, on-call. Multiple environments. Compliance considerations (GDPR, SOC 2 if B2B). You're now operating software, not just shipping it.</p>
+            <p><strong>Examples:</strong> a venture-backed startup's main app, a tool used by an entire industry, an app at the App Store top 100.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-6-2">
+      <span class="chapter-num">CHAPTER 6.2 · <span class="lvl lvl-1">L1 Toy</span></span>
+      <h2>Level 1 — <span class="ital">toy</span> projects</h2>
+      <p>The whole point of Level 1: get reps in. Each toy should take 30 minutes to 2 hours. Disposable. Throw it away or keep it; doesn't matter.</p>
+
+      <h3>What you need to know</h3>
+      <ul>
+        <li>What HTML / CSS / JavaScript are, roughly (Part 2.2-2.3).</li>
+        <li>How to open files in VS Code.</li>
+        <li>How to right-click → "Open with Live Server" or just double-click an .html file.</li>
+        <li>How to use Lovable or Claude Code.</li>
+      </ul>
+      <p>That's it. No databases, no servers, no users.</p>
+
+      <h3>Concrete project: a single-file pomodoro timer</h3>
+      <div class="prompt-box">
+        <div class="prompt-label">Toy project prompt</div>
+        <p>Build a single-file HTML pomodoro timer. Visible clock showing minutes:seconds. Three buttons: Start, Pause, Reset. A toggle for 25/5 (focus/break) vs 50/10 vs custom. Big readable type on dark background. Audio chime when a session ends (built into HTML, no external file). Everything in one .html file with inline CSS and JavaScript. No frameworks.</p>
+      </div>
+
+      <h3>What you'll learn at L1</h3>
+      <ul>
+        <li>How a single HTML file actually works (the spec → generate → run loop).</li>
+        <li>How to read JavaScript well enough to spot obvious things (where the timer logic lives).</li>
+        <li>How to iterate: ask AI to change one thing, see what happens.</li>
+        <li>How to commit to Git for the first time (use VS Code's Source Control panel — it's a one-click experience).</li>
+      </ul>
+
+      <h3>Five more toys to try</h3>
+      <ol>
+        <li>A countdown to a date you care about (your birthday, a vacation).</li>
+        <li>A "decision wheel" that randomly picks an option from a list you type in.</li>
+        <li>A unit converter (miles ↔ km, F ↔ C).</li>
+        <li>A "rate my plant" image-upload that uses a fake AI score.</li>
+        <li>A typing speed test.</li>
+      </ol>
+
+      <p>You'll feel almost embarrassingly capable by toy five. That's the point.</p>
+    </section>
+
+    <section class="chapter" id="ch-6-3">
+      <span class="chapter-num">CHAPTER 6.3 · <span class="lvl lvl-2">L2 Personal</span></span>
+      <h2>Level 2 — <span class="ital">personal</span> tools</h2>
+      <p>Now your app saves data. Just for you. No accounts — but the data sticks around between visits.</p>
+
+      <h3>What's new at L2</h3>
+      <ul>
+        <li><strong>Persistence.</strong> Either browser localStorage (data lives in the user's browser only) or a real database.</li>
+        <li><strong>Multiple pages or screens.</strong> A nav. A real layout.</li>
+        <li><strong>Hosting.</strong> Lovable's publish, or Vercel/Netlify if you went the IDE route.</li>
+        <li><strong>Mobile-responsive.</strong> Use it from your phone.</li>
+      </ul>
+
+      <h3>Concrete project: personal daily journal</h3>
+      <div class="prompt-box">
+        <div class="prompt-label">L2 project prompt</div>
+        <p>Build "Pages" — a personal journal app for one user (me). No authentication. Use Supabase for storage but skip auth — just a single hardcoded user. Two pages: Today (a big textarea for today's entry, autosaves every 5 seconds) and History (a list of past entries by date, click to view full entry). Show a calendar heatmap on History (like GitHub contributions) of which days I journaled. Tailwind, serif font for the writing area, sans-serif everywhere else. Beautiful, minimal, calm.</p>
+      </div>
+
+      <h3>What you'll learn at L2</h3>
+      <ul>
+        <li>How a real database works (Part 2.4).</li>
+        <li>How to deploy to the public internet.</li>
+        <li>How to read your app from your phone.</li>
+        <li>The first taste of "oh, I made a real product."</li>
+      </ul>
+
+      <h3>Five more personal tools</h3>
+      <ol>
+        <li>A reading log: books you've read, notes per book.</li>
+        <li>A workout tracker.</li>
+        <li>A flashcard study app built from your notes.</li>
+        <li>A meal planner with grocery-list export.</li>
+        <li>A bookmark organizer with tags and full-text search.</li>
+      </ol>
+
+      <div class="callout tip">
+        <div class="label">When L2 secretly becomes L3</div>
+        <p>You build a personal tool. A friend says "can you make me one?" Don't duplicate the project. Add real auth, give them an account. Congratulations — you've graduated to L3.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-6-4">
+      <span class="chapter-num">CHAPTER 6.4 · <span class="lvl lvl-3">L3 Shared</span></span>
+      <h2>Level 3 — <span class="ital">shared</span> apps</h2>
+      <p>Now other people use it. Real accounts. Real privacy. Free, but the consequences of bugs are real.</p>
+
+      <h3>What's new at L3</h3>
+      <ul>
+        <li><strong>Authentication</strong> (Part 2.6). Email/password or OAuth.</li>
+        <li><strong>Authorization</strong> — Row Level Security so users only see their own data.</li>
+        <li><strong>Error handling that doesn't crash on weird input.</strong></li>
+        <li><strong>Empty states, loading states, failure states.</strong></li>
+        <li><strong>A landing page</strong> explaining what your app does.</li>
+        <li><strong>A privacy policy</strong> (use a free generator).</li>
+      </ul>
+
+      <h3>Concrete project: book club tracker</h3>
+      <div class="prompt-box">
+        <div class="prompt-label">L3 project prompt</div>
+        <p>Build "Pageturners" — a free book club tracker. Users sign up with email or Google OAuth via Supabase, with Row Level Security so each user only sees clubs they're a member of. Features: (1) Create a club, get an invite link. (2) Members vote on the next book from a shared list. (3) Track who's read it (a checkbox). (4) Discussion thread per book with markdown comments. (5) "Next meeting" date with email reminders 24h before. Use React, Tailwind, Supabase. Include a public landing page at "/" explaining the app, plus /privacy and /terms boilerplate pages. Handle all common error cases gracefully — show toasts for errors, never just crash.</p>
+      </div>
+
+      <h3>What you'll learn at L3</h3>
+      <ul>
+        <li>How auth actually flows end to end.</li>
+        <li>How to test something with two different user accounts (most bugs at this level are "I forgot the other user perspective").</li>
+        <li>How to write a clear landing page that explains what your thing does.</li>
+        <li>What "production-quality polish" actually feels like — error states, loading spinners, empty states.</li>
+        <li>How a privacy policy looks.</li>
+      </ul>
+
+      <div class="callout danger">
+        <div class="label">The L3 trap</div>
+        <p>Shipping an L3 app with L2 security. The classic mistake: auth works, but you forgot to enable Row Level Security on a table, so anyone with the URL can see everyone's data. Always test by signing up as User B and trying to access User A's URLs directly. If it works — you have a leak. Ask AI: "audit this app for missing authorization checks; show me where users could access other users' data."</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-6-5">
+      <span class="chapter-num">CHAPTER 6.5 · <span class="lvl lvl-4">L4 SaaS</span></span>
+      <h2>Level 4 — <span class="ital">SaaS</span> / paid products</h2>
+      <p>People pay. The skills change. You're not just a builder; you're operating a business.</p>
+
+      <h3>What's new at L4</h3>
+      <ul>
+        <li><strong>Payments.</strong> Stripe Checkout for one-time, Stripe Subscriptions for recurring.</li>
+        <li><strong>Webhooks</strong> (Part 2.7) for handling Stripe events — successful charges, failed renewals, refunds.</li>
+        <li><strong>Tiered access.</strong> "Free users get X. Paid users get Y."</li>
+        <li><strong>Email infrastructure.</strong> Welcome emails, password resets, billing receipts. Use Resend or Loops.</li>
+        <li><strong>Customer support.</strong> Even a "support@yourapp.com" inbox is a start.</li>
+        <li><strong>Analytics.</strong> PostHog or Plausible. Know what people actually do.</li>
+        <li><strong>A real domain.</strong> Custom domain ($10/year), not <code>.lovable.app</code>.</li>
+        <li><strong>Backups.</strong> Supabase has them automatically; verify they exist.</li>
+      </ul>
+
+      <h3>Concrete project: a writing assistant SaaS</h3>
+      <div class="prompt-box">
+        <div class="prompt-label">L4 project prompt (build in stages)</div>
+        <p>Build "Sharpen" — a $12/month AI writing assistant. Users paste a draft; the app gives back specific suggestions (cut weak verbs, suggest stronger nouns, flag passive voice, suggest cuts). Free tier: 3 documents per month. Paid tier: unlimited. Stack: React, Tailwind, Supabase auth + DB, Stripe Subscriptions, OpenAI API on the backend (key never exposed to frontend). Include: landing page with pricing table, free signup flow, paywall when a free user hits the limit, billing page where users can cancel, automatic free downgrade if their subscription lapses, transactional emails on signup and cancellation. RLS on every table. Include /privacy, /terms, /refund-policy pages. Build it in three milestones: (1) free tier only with paywall message; (2) wire up Stripe; (3) email + analytics.</p>
+      </div>
+
+      <h3>What you'll learn at L4</h3>
+      <ul>
+        <li>Stripe end-to-end — checkout, webhooks, customer portal.</li>
+        <li>How to handle the edge cases that make customers angry (failed payment, double-charge, refund flow).</li>
+        <li>How to build the "non-product" pages users expect (pricing, terms, refunds).</li>
+        <li>What "customer support" actually feels like (it's mostly password resets at this scale).</li>
+        <li>How to read product analytics and decide what to build next.</li>
+      </ul>
+
+      <div class="callout warn">
+        <div class="label">The honest L4 reality</div>
+        <p>The technical part is the easy half. The hard half is marketing, sales, customer feedback loops, content, and the slog of getting from $0 to $1,000 MRR. Vibe coding gives you a product. Getting paid for it is its own skill — orthogonal to anything in this guide. Indie Hackers and the "build in public" community on X are where to learn that piece.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-6-6">
+      <span class="chapter-num">CHAPTER 6.6 · <span class="lvl lvl-5">L5 Production</span></span>
+      <h2>Level 5 — <span class="ital">production-grade</span></h2>
+      <p>Hundreds of thousands of users. Millions. You're operating software at scale. Vibe coding gets you here, but the skills you need become different — less about building, more about running.</p>
+
+      <h3>What's new at L5</h3>
+      <ul>
+        <li><strong>Monitoring.</strong> Sentry for errors. Datadog or Better Stack for uptime. Slack alerts when something breaks.</li>
+        <li><strong>Multiple environments.</strong> dev, staging, production (Part 2.8).</li>
+        <li><strong>CI/CD.</strong> Tests run automatically on every push. Failed tests block merging.</li>
+        <li><strong>Performance.</strong> Database indexes, caching (Redis), CDNs, optimizing slow queries.</li>
+        <li><strong>Compliance.</strong> GDPR (data deletion requests). SOC 2 if you sell to bigger companies. Cookie consent banners. Terms with real lawyers.</li>
+        <li><strong>Security audits.</strong> Penetration testing. Bug bounties.</li>
+        <li><strong>On-call.</strong> Someone (probably you) gets paged at 2am when servers crash.</li>
+        <li><strong>A team.</strong> Solo founders rarely operate at L5 alone. You hire, or you contract.</li>
+      </ul>
+
+      <h3>Concrete project: production hardening</h3>
+      <p>At L5, projects aren't "build a thing" — they're "make this thing reliable, fast, secure, and observable." Here's what a real L5 project sprint looks like:</p>
+      <div class="prompt-box">
+        <div class="prompt-label">L5 hardening sprint</div>
+        <p>Take "Sharpen" from Level 4 to production-grade. Tasks: (1) Add Sentry for error tracking, alert to Slack on every 500 error. (2) Set up a staging environment that mirrors production. (3) Write a CI pipeline that runs tests on every PR — block merges if tests fail. (4) Add database indexes on the most-queried columns; you'll need to identify them first by analyzing slow queries. (5) Add Redis caching for the OpenAI API responses (same input = cached output, expires daily). (6) Build a GDPR data-deletion endpoint that wipes a user's data from all tables. (7) Add a cookie consent banner. (8) Get a real privacy policy from Termly. (9) Write a runbook in /docs/runbook.md for the most common production issues. Do this in nine separate PRs, each branched, reviewed, and merged independently.</p>
+      </div>
+
+      <h3>What you'll learn at L5</h3>
+      <ul>
+        <li>How to read code well enough to spot when AI is wrong about something subtle.</li>
+        <li>How to think about systems, not just features. (Caching, queues, retry policies.)</li>
+        <li>How to write a runbook a stranger could follow at 2am.</li>
+        <li>How to triage incidents calmly.</li>
+        <li>How to say "no" to features that would compromise reliability.</li>
+      </ul>
+
+      <h3>The honest truth about L5 and AI</h3>
+      <p>AI tools are great at L1–L4. They're <em>useful but not sufficient</em> at L5. The skills that matter most at L5 — judgment under pressure, deep debugging, security thinking, system design — are exactly the skills AI is least reliable at. People who reach L5 are people who used the L1–L4 years to actually learn how code works, not just how to prompt for it.</p>
+
+      <div class="pullquote">
+        L5 isn't a different version of vibe coding. It's a different job. You've stopped being a builder and become an operator.
+        <cite>The level where this guide hands you off</cite>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-6-7">
+      <span class="chapter-num">CHAPTER 6.7</span>
+      <h2>The level <span class="ital">ladder</span> — concrete milestones</h2>
+      <p>How to know you've leveled up. Concrete, observable milestones — not feelings.</p>
+
+      <table class="compare-table">
+        <thead><tr><th>Level</th><th>You've reached it when…</th><th>Time on average</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="tool-col"><span class="lvl lvl-1">L1 Toy</span></td>
+            <td>You've built and run three single-file HTML projects, can describe what each .js function does in your own words, and have made your first Git commit.</td>
+            <td>Week 1</td>
+          </tr>
+          <tr>
+            <td class="tool-col"><span class="lvl lvl-2">L2 Personal</span></td>
+            <td>You've shipped a personal app to a real URL, use it from your phone, and it persists data between visits.</td>
+            <td>Week 2–3</td>
+          </tr>
+          <tr>
+            <td class="tool-col"><span class="lvl lvl-3">L3 Shared</span></td>
+            <td>You've shipped an app where a friend signed up, used it, and didn't hit a critical bug. RLS is on. You have a landing page.</td>
+            <td>Month 2–3</td>
+          </tr>
+          <tr>
+            <td class="tool-col"><span class="lvl lvl-4">L4 SaaS</span></td>
+            <td>A stranger paid you for software you built. Stripe is wired up. You handle refunds without panicking. Custom domain.</td>
+            <td>Month 4–8</td>
+          </tr>
+          <tr>
+            <td class="tool-col"><span class="lvl lvl-5">L5 Production</span></td>
+            <td>You can read a Sentry stack trace and form a hypothesis. You've responded to an incident. Your tests catch regressions. You've said no to a feature for reliability reasons.</td>
+            <td>Year 1+</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Don't rush up the levels. Each one teaches things the next one assumes. L4 with an L2 foundation is fragile. L3 with the L2 instincts built in is sturdy.</p>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-5">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Part 5 · Building</div>
+      </a>
+      <a class="next" data-goto="p-7">
+        <div class="pn-label">Next</div>
+        <div class="pn-title">Part 7 · Ship &amp; Beyond</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PANE: PART 7 - SHIP & BEYOND ============== -->
+<div class="pane" id="p-7">
+  <div class="container">
+    <div class="pane-header">
+      <div class="part-num">Part Seven</div>
+      <h1 class="part-title">Ship &amp; <span class="ital">beyond</span></h1>
+      <p class="pane-lede">Going live, debugging like a pro, honest costs, pitfalls that burn beginners, and your 30-day plan to genuinely capable.</p>
+    </div>
+
+    <section class="chapter" id="ch-7-1">
+      <span class="chapter-num">CHAPTER 7.1 · <span class="lvl lvl-2">L2–L5</span></span>
+      <h2>Going <span class="ital">live</span></h2>
+      <p>Deployment isn't hard anymore. Pick a host based on what you built:</p>
+
+      <table class="compare-table">
+        <thead><tr><th>Host</th><th>Best for</th><th>Free tier</th><th>Setup</th></tr></thead>
+        <tbody>
+          <tr><td class="tool-col">Vercel</td><td>React / Next.js apps</td><td>Generous</td><td>Connect GitHub, Import. ~30 seconds.</td></tr>
+          <tr><td class="tool-col">Netlify</td><td>Static sites &amp; Jamstack</td><td>Generous</td><td>Same as Vercel.</td></tr>
+          <tr><td class="tool-col">Cloudflare Pages</td><td>Anything static + edge functions</td><td>Very generous</td><td>Connect GitHub, deploy.</td></tr>
+          <tr><td class="tool-col">Render</td><td>Backend services, databases</td><td>Limited</td><td>A bit more setup; AI can walk you through.</td></tr>
+          <tr><td class="tool-col">Lovable / Replit / Bolt</td><td>What you built there</td><td>Limited URL</td><td>One click. Custom domain on paid.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Custom domain in three steps</h3>
+      <ol>
+        <li>Buy a domain at <a href="https://namecheap.com">Namecheap</a>, <a href="https://porkbun.com">Porkbun</a>, or Cloudflare ($10-15/year for .com).</li>
+        <li>In your hosting dashboard, add the domain.</li>
+        <li>Copy DNS records from the host, paste into your registrar's DNS settings. Wait 5-60 minutes.</li>
+      </ol>
+      <p>AI walks you through every step — "I want to point mydomain.com to my Vercel deployment, what DNS records do I need?"</p>
+
+      <h3>Continuous deployment — the magic</h3>
+      <p>Once you connect GitHub to Vercel/Netlify/Cloudflare, every <code>git push</code> auto-deploys. Push to main → live in production in 30-90 seconds. This single feature is what makes vibe coding's iteration loop fast enough to work.</p>
+    </section>
+
+    <section class="chapter" id="ch-7-2">
+      <span class="chapter-num">CHAPTER 7.2 · <span class="lvl lvl-2">L2–L5</span></span>
+      <h2>Debugging when things <span class="ital">break</span></h2>
+      <p>Things will break. The frequency drops a lot once you internalize "small steps, frequent commits" — but never to zero. The order of operations:</p>
+
+      <ol>
+        <li><strong>Reproduce it.</strong> Make it happen on purpose. Note the exact steps.</li>
+        <li><strong>Capture the error.</strong> If your browser console (F12 → Console) shows red, copy the whole thing.</li>
+        <li><strong>Paste it into your AI verbatim</strong>: <em>"This error appears when I click [X]. The full error: [paste]. The code where this happens is in [file]. Please investigate before changing anything."</em></li>
+        <li><strong>If it doesn't fix in two attempts</strong>, roll back to your last working commit (<code>git reset --hard HEAD~1</code> or VS Code Source Control panel).</li>
+        <li><strong>Try a different approach.</strong> Start a fresh AI session. Don't carry broken context.</li>
+      </ol>
+
+      <h3>The browser DevTools every vibe coder should know</h3>
+      <p>Press F12 in any browser:</p>
+      <ul>
+        <li><strong>Elements</strong> — inspect any HTML element and see its styles. Right-click → Inspect.</li>
+        <li><strong>Console</strong> — see error messages and logs. Most JS bugs surface here.</li>
+        <li><strong>Network</strong> — every request your app makes. Red = failed.</li>
+        <li><strong>Application</strong> — what's in cookies and localStorage. "Why isn't my user staying logged in?" bugs live here.</li>
+      </ul>
+
+      <p>When debugging with AI: <em>"Here's what the console shows: [paste]. Here's the failed request from the Network tab: [paste]."</em> Specificity makes everything 10× faster.</p>
+    </section>
+
+    <section class="chapter" id="ch-7-3">
+      <span class="chapter-num">CHAPTER 7.3</span>
+      <h2>Costs &amp; limits — <span class="ital">honest numbers</span></h2>
+      <p>Vibe coding is cheaper than hiring developers, but not free at scale. Realistic budget for 2026:</p>
+
+      <table class="compare-table">
+        <thead><tr><th>Tool</th><th>Free tier reality</th><th>Practical paid plan</th></tr></thead>
+        <tbody>
+          <tr><td class="tool-col">Claude Pro</td><td>Limited Chat, no Cowork/Code</td><td>$20/mo — covers Cowork &amp; Code for normal use</td></tr>
+          <tr><td class="tool-col">Claude Max</td><td>—</td><td>$100-200/mo — heavy daily coding</td></tr>
+          <tr><td class="tool-col">ChatGPT Plus (Codex)</td><td>Limited Codex access</td><td>$20/mo Plus, $200/mo Pro</td></tr>
+          <tr><td class="tool-col">Antigravity</td><td>Generous, fully free</td><td>Pro/Ultra for higher rate limits</td></tr>
+          <tr><td class="tool-col">Lovable</td><td>Limited daily messages</td><td>$20/mo Starter, $50/mo Launch</td></tr>
+          <tr><td class="tool-col">Bolt</td><td>Limited daily tokens</td><td>$25/mo Pro</td></tr>
+          <tr><td class="tool-col">Replit</td><td>30-day published apps</td><td>$20/mo Core</td></tr>
+          <tr><td class="tool-col">Cursor</td><td>Limited fast requests</td><td>$20/mo Pro</td></tr>
+          <tr><td class="tool-col">GitHub Copilot</td><td>Free for students, limited for everyone</td><td>$10/mo individual</td></tr>
+          <tr><td class="tool-col">Hosting (Vercel/Netlify/CF)</td><td>Free for small projects</td><td>$20/mo when you grow</td></tr>
+          <tr><td class="tool-col">Supabase</td><td>2 projects, 500MB DB free</td><td>$25/mo Pro</td></tr>
+          <tr><td class="tool-col">OpenAI / Anthropic API</td><td>Free trial credit only</td><td>Pay-per-use, $5-50/mo personal</td></tr>
+          <tr><td class="tool-col">Domain name</td><td>—</td><td>$10-15/year</td></tr>
+        </tbody>
+      </table>
+
+      <h3>A realistic minimum budget</h3>
+      <p>Serious in month 1: $20–$60. Pick one paid tool — Claude Pro or Lovable Starter — and start. Everything else free.</p>
+      <p>Most names above aren't required at once. Add tools as you outgrow each. Resist subscribing to all of them.</p>
+    </section>
+
+    <section class="chapter" id="ch-7-4">
+      <span class="chapter-num">CHAPTER 7.4</span>
+      <h2>Pitfalls to <span class="ital">avoid</span></h2>
+      <p>Read twice.</p>
+
+      <div class="callout danger">
+        <div class="label">1. API keys in a public GitHub repo</div>
+        <p>Push code with an API key inside → scrapers find it within minutes → $4,000 bill in the morning. Always env variables. Always <code>.env</code> in <code>.gitignore</code>. If leaked, <em>immediately</em> revoke in the provider's dashboard — don't just delete the commit.</p>
+      </div>
+      <div class="callout danger">
+        <div class="label">2. Skipping Supabase Row Level Security</div>
+        <p>Default: anyone knowing your Supabase URL can read your whole database. RLS is the fix; must be turned on per-table. Every Supabase prompt should include "with RLS enabled and policies that only let users read their own rows."</p>
+      </div>
+      <div class="callout danger">
+        <div class="label">3. Never committing to Git</div>
+        <p>#1 cause of vibe coding tragedies. AI breaks something subtle. Can't undo. Hours lost. Commit at least every 30 min when actively building.</p>
+      </div>
+      <div class="callout warn">
+        <div class="label">4. Asking for too much in one prompt</div>
+        <p>"Build me Twitter" isn't a prompt. "Build a sign-up page with Supabase email auth, redirect to a dashboard" is. Slice work into 2-5 min pieces.</p>
+      </div>
+      <div class="callout warn">
+        <div class="label">5. Trusting AI on security</div>
+        <p>AI happily builds things that <em>work</em> while being trivially hackable. After anything with logins, payments, user data: <em>"Audit this code for common security issues — XSS, SQL injection, missing auth checks, exposed secrets, weak validation. List every finding before fixing anything."</em></p>
+      </div>
+      <div class="callout warn">
+        <div class="label">6. Believing "I tested this and it works"</div>
+        <p>Test yourself. Click the buttons. Try edge cases. No internet, empty database, invalid input, on a phone. AI tested its mental model — you test reality.</p>
+      </div>
+      <div class="callout">
+        <div class="label">7. Tool-hopping instead of finishing</div>
+        <p>Every week there's a hot new tool. Pick one workflow and ship something. Switch tools <em>between</em> projects, not mid-build.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="ch-7-5">
+      <span class="chapter-num">CHAPTER 7.5</span>
+      <h2>Your <span class="ital">path</span> forward</h2>
+
+      <p class="intro-para">
+        <span class="drop">Y</span>ou now know more about how modern software gets built than 95% of the population. The road from here is just doing — building little things, breaking them, fixing them, breaking them again.
+      </p>
+
+      <h3>The 30-day plan</h3>
+      <div class="timeline">
+        <div class="tl-item"><h4>Days 1–3 · Setup &amp; first app <span class="lvl lvl-1">L1</span></h4><p>Install Node, Git, VS Code, Claude Desktop. Create GitHub account. Sign up for Lovable. Build the habit tracker from Part 5. Ship it. Tell one friend.</p></div>
+        <div class="tl-item"><h4>Days 4–10 · Repeat with variations <span class="lvl lvl-1">L1</span></h4><p>Build three more tiny apps. A pomodoro timer. A countdown to a date you care about. A flashcard quiz from your study notes. Push each to GitHub.</p></div>
+        <div class="tl-item"><h4>Days 11–17 · First agent <span class="lvl lvl-2">L2</span></h4><p>Build a Cowork scheduled task that saves you real time. Plus one "wrap an AI API" Lovable app. Generate, refine, ship.</p></div>
+        <div class="tl-item"><h4>Days 18–24 · Antigravity or Codex <span class="lvl lvl-3">L3</span></h4><p>Download Antigravity (free) or get Codex if you have ChatGPT. Open a Lovable app from GitHub and add a feature from the agentic IDE. Notice how different it feels.</p></div>
+        <div class="tl-item"><h4>Days 25–30 · Build a game <span class="lvl lvl-2">L2</span></h4><p>The paddle game from Part 5. Then a variation of your own. Share both. The dopamine of having built something playable hits harder than anything else.</p></div>
+      </div>
+
+      <h3>What "advanced" looks like</h3>
+      <p>You're a serious vibe coder once you can do these without sweating:</p>
+      <ul>
+        <li>Take a half-finished Lovable project, open in Antigravity, add a tricky new feature, push, deploy.</li>
+        <li>Recognize when AI is going in circles and stop it before wasting tokens.</li>
+        <li>Read a Git diff and tell whether the AI's change is reasonable.</li>
+        <li>Write a <code>CLAUDE.md</code> or <code>GEMINI.md</code> that captures your project's conventions.</li>
+        <li>Hook up MCP servers to give your agents real-world powers.</li>
+        <li>Pair a frontend tool (v0) with a backend service (Supabase) without forcing them into one app.</li>
+        <li>Diagnose a production bug from the browser console and write a precise repro prompt.</li>
+      </ul>
+      <p>None of this requires traditional coding skill. It requires careful description, small steps, willingness to read what AI produces. Inside a quarter if you build most weeks.</p>
+
+      <h3>Communities worth joining</h3>
+      <ul>
+        <li>r/vibecoding and r/ClaudeAI on Reddit</li>
+        <li>Lovable's Discord</li>
+        <li>The Antigravity subreddit</li>
+        <li>Indie Hackers (indiehackers.com) for shipping inspiration</li>
+        <li>"Build in Public" on Twitter/X</li>
+      </ul>
+
+      <h3>One final thing</h3>
+      <div class="pullquote">
+        The gap between an idea in your head and an app on the internet used to be three months and $15,000. In 2026 it can be a weekend and a clear prompt. The bottleneck is no longer technical — it's taste, judgment, and the willingness to ship.
+        <cite>What the tools have actually changed</cite>
+      </div>
+
+      <p>Go build the thing. Then build the next one a little better. That's the whole game.</p>
+
+      <div class="endmark">· · · · ·</div>
+    </section>
+
+    <div class="page-nav">
+      <a class="prev" data-goto="p-6">
+        <div class="pn-label">Previous</div>
+        <div class="pn-title">Part 6 · Levels</div>
+      </a>
+      <a class="next" data-goto="p-intro">
+        <div class="pn-label">Back to</div>
+        <div class="pn-title">Start Here</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// Side-nav configuration per pane
+// ============================================================
+const sideNavs = {
+  'p-intro': {
+    label: 'Welcome',
+    items: [
+      { id: 'how-to-use', num: '00', text: 'How to use this guide' }
+    ]
+  },
+  'p-1': {
+    label: 'Part 1 · Foundations',
+    items: [
+      { id: 'ch-1-1', num: '1.1', text: 'What is vibe coding' },
+      { id: 'ch-1-2', num: '1.2', text: 'Mental model of an app' },
+      { id: 'ch-1-3', num: '1.3', text: 'Plain-English glossary' }
+    ]
+  },
+  'p-2': {
+    label: 'Part 2 · Coding Basics',
+    items: [
+      { id: 'ch-2-1', num: '2.1', text: 'How the internet works' },
+      { id: 'ch-2-2', num: '2.2', text: 'Data: arrays, objects, JSON' },
+      { id: 'ch-2-3', num: '2.3', text: 'Logic: if, loops, functions' },
+      { id: 'ch-2-4', num: '2.4', text: 'How databases work' },
+      { id: 'ch-2-5', num: '2.5', text: 'Branches & merges' },
+      { id: 'ch-2-6', num: '2.6', text: 'Auth & sessions' },
+      { id: 'ch-2-7', num: '2.7', text: 'How APIs work' },
+      { id: 'ch-2-8', num: '2.8', text: 'Environments & env vars' }
+    ]
+  },
+  'p-3': {
+    label: 'Part 3 · Setup',
+    items: [
+      { id: 'ch-3-1', num: '3.1', text: 'Install your stack' },
+      { id: 'ch-3-2', num: '3.2', text: 'GitHub day-to-day' },
+      { id: 'ch-3-3', num: '3.3', text: 'VS Code basics' }
+    ]
+  },
+  'p-4': {
+    label: 'Part 4 · Tools',
+    items: [
+      { id: 'ch-4-1', num: '4.1', text: 'The tool landscape' },
+      { id: 'ch-4-2', num: '4.2', text: 'Claude Cowork' },
+      { id: 'ch-4-3', num: '4.3', text: 'Claude Code' },
+      { id: 'ch-4-4', num: '4.4', text: 'Google Antigravity' },
+      { id: 'ch-4-5', num: '4.5', text: 'OpenAI Codex' },
+      { id: 'ch-4-6', num: '4.6', text: 'Lovable, Bolt, Replit, v0' },
+      { id: 'ch-4-7', num: '4.7', text: 'Cursor & Windsurf' }
+    ]
+  },
+  'p-5': {
+    label: 'Part 5 · Building',
+    items: [
+      { id: 'ch-5-1', num: '5.1', text: 'The build workflow' },
+      { id: 'ch-5-2', num: '5.2', text: 'Prompting like a pro' },
+      { id: 'ch-5-3', num: '5.3', text: 'Project: web app' },
+      { id: 'ch-5-4', num: '5.4', text: 'Project: AI agent' },
+      { id: 'ch-5-5', num: '5.5', text: 'Project: game' },
+      { id: 'ch-5-6', num: '5.6', text: 'Mobile versions' }
+    ]
+  },
+  'p-6': {
+    label: 'Part 6 · Levels',
+    items: [
+      { id: 'ch-6-1', num: '6.1', text: 'The level map' },
+      { id: 'ch-6-2', num: '6.2', text: 'L1 — Toy projects' },
+      { id: 'ch-6-3', num: '6.3', text: 'L2 — Personal tools' },
+      { id: 'ch-6-4', num: '6.4', text: 'L3 — Shared apps' },
+      { id: 'ch-6-5', num: '6.5', text: 'L4 — SaaS / paid' },
+      { id: 'ch-6-6', num: '6.6', text: 'L5 — Production' },
+      { id: 'ch-6-7', num: '6.7', text: 'The level ladder' }
+    ]
+  },
+  'p-7': {
+    label: 'Part 7 · Ship & Beyond',
+    items: [
+      { id: 'ch-7-1', num: '7.1', text: 'Going live' },
+      { id: 'ch-7-2', num: '7.2', text: 'Debugging' },
+      { id: 'ch-7-3', num: '7.3', text: 'Costs & limits' },
+      { id: 'ch-7-4', num: '7.4', text: 'Pitfalls to avoid' },
+      { id: 'ch-7-5', num: '7.5', text: 'Your path forward' }
+    ]
+  }
+};
+
+// ============================================================
+// Tab + pane switching
+// ============================================================
+const tabs = document.querySelectorAll('.tab');
+const panes = document.querySelectorAll('.pane');
+const sidenav = document.getElementById('sidenav');
+
+function showPane(paneId) {
+  // tabs
+  tabs.forEach(t => {
+    t.classList.toggle('active', t.dataset.pane === paneId);
+  });
+  // panes
+  panes.forEach(p => {
+    p.classList.toggle('active', p.id === paneId);
+  });
+  // side nav
+  renderSideNav(paneId);
+  // scroll to top of content area
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  // hash for back/forward
+  history.pushState({ paneId }, '', '#' + paneId);
+}
+
+function renderSideNav(paneId) {
+  const config = sideNavs[paneId];
+  if (!config) {
+    sidenav.innerHTML = '';
+    return;
+  }
+  let html = '<div class="sn-label">' + config.label + '</div>';
+  config.items.forEach(item => {
+    html += '<a class="sn-item" data-target="' + item.id + '"><span class="sn-num">' + item.num + '</span>' + item.text + '</a>';
+  });
+  sidenav.innerHTML = html;
+
+  // attach handlers
+  sidenav.querySelectorAll('.sn-item').forEach(a => {
+    a.addEventListener('click', e => {
+      const targetId = a.dataset.target;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        sidenav.querySelectorAll('.sn-item').forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+      }
+    });
+  });
+}
+
+// tab click handlers
+tabs.forEach(t => {
+  t.addEventListener('click', () => showPane(t.dataset.pane));
+});
+
+// page nav handlers (prev/next at the bottom of each pane)
+document.querySelectorAll('[data-goto]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    showPane(el.dataset.goto);
+  });
+});
+
+// browser back/forward
+window.addEventListener('popstate', e => {
+  const paneId = (e.state && e.state.paneId) || location.hash.slice(1) || 'p-intro';
+  if (document.getElementById(paneId)) showPane(paneId);
+});
+
+// scroll spy for side nav highlighting
+function setupScrollSpy() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidenav.querySelectorAll('.sn-item').forEach(a => {
+          a.classList.toggle('active', a.dataset.target === id);
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  document.querySelectorAll('section.chapter, section.hero').forEach(s => {
+    if (s.id) observer.observe(s);
+  });
+}
+
+// init
+const initialPane = location.hash.slice(1) || 'p-intro';
+if (document.getElementById(initialPane)) {
+  showPane(initialPane);
+} else {
+  showPane('p-intro');
+}
+setupScrollSpy();
+</script>
+
+</body>
+</html>

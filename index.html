@@ -847,28 +847,336 @@ pre .fn { color: #e8b87d; }
 }
 
 /* ===== RESPONSIVE ===== */
+/* ===== CHAT TAB ===== */
+.tab-chat {
+  background: linear-gradient(135deg, rgba(200, 148, 50, 0.2), rgba(197, 83, 43, 0.2));
+  border-left: 1px solid var(--gold) !important;
+}
+.tab-chat .tab-num { color: var(--gold); opacity: 1; }
+.tab-chat.active { background: var(--gold); color: var(--ink); }
+.tab-chat.active .tab-num { color: var(--ink); }
+
+/* ===== CHAT PANE ===== */
+.chat-pane {
+  display: none;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+.chat-pane.active {
+  display: flex;
+  animation: fadein 0.25s ease;
+}
+.chat-header {
+  padding: 28px 40px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.chat-header h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.chat-header h1 .ital { font-style: italic; font-weight: 300; }
+.chat-header h1 .accent { color: var(--rust); font-weight: 700; }
+.chat-header .ch-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+.chat-header .ch-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--rust);
+  margin-bottom: 10px;
+}
+
+/* setup screen */
+.chat-setup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  overflow-y: auto;
+}
+.chat-setup-card {
+  max-width: 560px;
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  padding: 32px;
+  border-radius: 4px;
+}
+.chat-setup-card h3 {
+  margin: 0 0 14px;
+}
+.chat-setup-card h3::before { content: ''; }
+.chat-setup-card p { font-size: 15px; margin-bottom: 14px; }
+.chat-setup-card label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--olive);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.chat-setup-card .provider-pick {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.chat-setup-card .provider-pick button {
+  flex: 1;
+  padding: 12px;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--ink);
+}
+.chat-setup-card .provider-pick button:hover {
+  background: var(--cream-dark);
+}
+.chat-setup-card .provider-pick button.selected {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.chat-setup-card input[type="password"],
+.chat-setup-card input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  background: var(--paper);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  border-radius: 3px;
+}
+.chat-setup-card input:focus {
+  outline: none;
+  border-color: var(--rust);
+}
+.chat-setup-card .help {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 18px;
+  margin-top: 4px;
+}
+.chat-setup-card .help a { color: var(--rust-dark); }
+.chat-setup-card button.start-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--rust);
+  color: var(--paper);
+  border: none;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+.chat-setup-card button.start-btn:hover { background: var(--rust-dark); }
+.chat-setup-card button.start-btn:disabled {
+  background: var(--muted);
+  cursor: not-allowed;
+}
+.chat-setup-card .security-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--line);
+  line-height: 1.5;
+}
+.chat-setup-card .security-note strong { color: var(--olive); }
+
+/* messages */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.msg {
+  max-width: 88%;
+  display: flex;
+  flex-direction: column;
+}
+.msg-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.msg-body {
+  padding: 16px 20px;
+  border-radius: 4px;
+  line-height: 1.65;
+  font-size: 15px;
+}
+.msg.user { align-self: flex-end; align-items: flex-end; }
+.msg.user .msg-role { color: var(--rust); }
+.msg.user .msg-body {
+  background: var(--rust);
+  color: var(--paper);
+  border-bottom-right-radius: 1px;
+}
+.msg.assistant { align-self: flex-start; }
+.msg.assistant .msg-role { color: var(--olive); }
+.msg.assistant .msg-body {
+  background: var(--cream);
+  border: 1px solid var(--cream-dark);
+  border-bottom-left-radius: 1px;
+}
+.msg.assistant .msg-body p { margin-bottom: 12px; }
+.msg.assistant .msg-body p:last-child { margin-bottom: 0; }
+.msg.assistant .msg-body code {
+  font-size: 0.85em;
+  background: var(--paper);
+}
+.msg.assistant .msg-body pre {
+  margin: 12px 0;
+  font-size: 12px;
+  padding: 14px 16px;
+}
+.msg.assistant .msg-body strong { color: var(--ink); }
+.msg.assistant .msg-body ul,
+.msg.assistant .msg-body ol { margin: 8px 0 8px 22px; }
+.msg.error .msg-body {
+  background: rgba(181, 59, 46, 0.1);
+  border: 1px solid #b53b2e;
+  color: #8a2a20;
+}
+.msg-thinking {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+.msg-thinking span {
+  width: 7px; height: 7px;
+  background: var(--muted);
+  border-radius: 50%;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+.msg-thinking span:nth-child(2) { animation-delay: 0.15s; }
+.msg-thinking span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* suggestions */
+.chat-suggestions {
+  padding: 0 40px 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.suggestion-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 7px 13px;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.15s;
+  font-family: 'Inter Tight', sans-serif;
+}
+.suggestion-chip:hover {
+  background: var(--rust);
+  color: var(--paper);
+  border-color: var(--rust);
+}
+
+/* input */
+.chat-input-row {
+  padding: 18px 40px 28px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.chat-input {
+  flex: 1;
+  min-height: 44px;
+  max-height: 200px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--line);
+  background: var(--paper);
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink);
+  resize: none;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input:focus { border-color: var(--rust); }
+.chat-send {
+  padding: 12px 22px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s;
+  height: 44px;
+}
+.chat-send:hover { background: var(--rust); }
+.chat-send:disabled { background: var(--muted); cursor: not-allowed; }
+.chat-footer {
+  padding: 0 40px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 0.05em;
+}
+.chat-footer a {
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--muted);
+}
+.chat-footer a:hover { color: var(--rust); }
+
 @media (max-width: 1024px) {
-  .layout { flex-direction: column; }
-  nav.sidenav {
-    width: 100%;
-    max-height: 220px;
-    position: relative;
-    top: 0;
-    border-right: none;
-    border-bottom: 2px solid var(--line);
-  }
-  .container { padding: 36px 22px 60px; }
-  .hero { padding: 50px 22px 30px; }
-  h2 { font-size: 30px; }
-  h1.part-title { font-size: 38px; }
-  h1.hero-title { font-size: 46px; }
-  .bands { grid-template-columns: 1fr; }
-  .brand-top { min-width: 180px; padding: 12px 16px; }
-  .brand-top .b-title { font-size: 14px; }
-  .tab { padding: 14px 14px; }
-  .glossary-item { grid-template-columns: 1fr; gap: 4px; }
-  .lvl-row { grid-template-columns: 60px 1fr; gap: 16px; }
-  .lvl-num-big { font-size: 42px; }
+  .chat-pane { height: calc(100vh - 64px - 220px); }
+  .chat-header { padding: 20px 22px 16px; }
+  .chat-header h1 { font-size: 26px; }
+  .chat-messages { padding: 20px 22px; }
+  .chat-input-row { padding: 14px 22px 22px; }
+  .chat-suggestions { padding: 0 22px 12px; }
+  .chat-footer { padding: 0 22px 14px; }
+  .chat-setup { padding: 22px; }
+  .chat-setup-card { padding: 24px; }
 }
 </style>
 </head>
@@ -889,6 +1197,7 @@ pre .fn { color: #e8b87d; }
       <button class="tab" data-pane="p-5"><span class="tab-num">Part 5</span><span class="tab-label">Building</span></button>
       <button class="tab" data-pane="p-6"><span class="tab-num">Part 6</span><span class="tab-label">Levels</span></button>
       <button class="tab" data-pane="p-7"><span class="tab-num">Part 7</span><span class="tab-label">Ship &amp; Beyond</span></button>
+      <button class="tab tab-chat" data-pane="p-chat"><span class="tab-num">✦ Ask</span><span class="tab-label">Tutor</span></button>
     </div>
   </div>
 </header>
@@ -2783,6 +3092,69 @@ git push</code></pre>
   </main>
 </div>
 
+<!-- ============== PANE: CHAT (full height, custom layout) ============== -->
+<div class="chat-pane" id="p-chat">
+  <div class="chat-header">
+    <div class="ch-meta">✦ AI Tutor</div>
+    <h1>Ask <span class="ital">the</span> <span class="accent">tutor</span></h1>
+    <p class="ch-sub" id="ch-sub">Ask anything about vibe coding. Examples, explanations, debugging help — all grounded in this guide.</p>
+  </div>
+
+  <!-- Setup screen (shown until API key is entered) -->
+  <div class="chat-setup" id="chat-setup">
+    <div class="chat-setup-card">
+      <h3>One-time setup</h3>
+      <p>To chat with the tutor, paste your own API key below. It's stored only in your browser (localStorage) and goes directly to the AI provider — never to the guide author, never to any server in between.</p>
+
+      <label>Pick a provider</label>
+      <div class="provider-pick">
+        <button data-provider="gemini" class="selected">Google Gemini · Free</button>
+        <button data-provider="openai">OpenAI (GPT)</button>
+      </div>
+
+      <label for="api-key-input">API key</label>
+      <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off">
+      <div class="help" id="key-help">
+        Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. Gemini's free tier gives you 1,500 messages per day — far more than you'll need.
+      </div>
+
+      <button class="start-btn" id="start-chat-btn">Start chatting</button>
+
+      <div class="security-note">
+        <strong>Is this safe?</strong> Yes. Your key is stored only in your browser (localStorage) and goes directly to Google's servers — never to the guide author, never to any server in between. It's not committed to GitHub and not visible to anyone else visiting this page. <br><br>
+        <strong>Free tier is real:</strong> Gemini 2.5 Flash gives 1,500 free requests per day. You won't hit that with personal tutoring. No credit card needed to start. <br><br>
+        <strong>Clear key:</strong> use the "Change key" link at the bottom of the chat any time.
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat interface (shown after setup) -->
+  <div id="chat-active" style="display:none; flex:1; flex-direction:column; min-height:0;">
+    <div class="chat-messages" id="chat-messages"></div>
+
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button class="suggestion-chip">What is vibe coding?</button>
+      <button class="suggestion-chip">Explain Row Level Security simply</button>
+      <button class="suggestion-chip">Give me a Level 1 project idea</button>
+      <button class="suggestion-chip">How do APIs work?</button>
+      <button class="suggestion-chip">What's the difference between Cowork and Code?</button>
+    </div>
+
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chat-input" placeholder="Ask anything about the guide…" rows="1"></textarea>
+      <button class="chat-send" id="chat-send">Send</button>
+    </div>
+
+    <div class="chat-footer">
+      <span id="provider-label">Powered by Google Gemini · Free tier</span>
+      <span>
+        <a id="clear-history-btn">Clear chat</a> ·
+        <a id="reset-key-btn">Change key</a>
+      </span>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // Side-nav configuration per pane
@@ -2882,15 +3254,25 @@ function showPane(paneId) {
   tabs.forEach(t => {
     t.classList.toggle('active', t.dataset.pane === paneId);
   });
-  // panes
+  // regular panes
   panes.forEach(p => {
     p.classList.toggle('active', p.id === paneId);
   });
+  // chat pane (custom layout, separate handling)
+  const chatPane = document.getElementById('p-chat');
+  if (chatPane) {
+    chatPane.classList.toggle('active', paneId === 'p-chat');
+  }
+  // hide layout (sidebar + main) when chat tab is active
+  const layout = document.querySelector('.layout');
+  if (layout) {
+    layout.style.display = paneId === 'p-chat' ? 'none' : 'flex';
+  }
   // side nav
   renderSideNav(paneId);
-  // scroll to top of content area
+  // scroll to top
   window.scrollTo({ top: 0, behavior: 'instant' });
-  // hash for back/forward
+  // hash
   history.pushState({ paneId }, '', '#' + paneId);
 }
 
@@ -2959,12 +3341,327 @@ function setupScrollSpy() {
 
 // init
 const initialPane = location.hash.slice(1) || 'p-intro';
-if (document.getElementById(initialPane)) {
+if (document.getElementById(initialPane) || initialPane === 'p-chat') {
   showPane(initialPane);
 } else {
   showPane('p-intro');
 }
 setupScrollSpy();
+
+// ============================================================
+// CHAT — AI tutor
+// ============================================================
+
+const SYSTEM_PROMPT = `You are the AI tutor for "The Vibe Coder's Field Manual," an interactive guide that teaches complete beginners how to build software by describing it to AI. The reader has zero coding experience.
+
+# Your role
+- Answer questions about anything in the guide.
+- Give concrete examples when explaining concepts.
+- Explain things in plain English, like you would to a smart friend with no tech background.
+- When something requires technical jargon, define it the first time.
+- Be direct and warm. Avoid corporate hedging.
+- If you don't know, say so.
+
+# What the guide covers
+The guide has 7 parts:
+1. Foundations — what vibe coding is, the mental model of an app, plain-English glossary
+2. Coding Basics — internet & HTTP, data structures (arrays/objects/JSON), logic (if/loops/functions), databases & SQL, Git deeper (branches/merges), auth & sessions, APIs end-to-end, environments & env vars
+3. Setup — installing Node, Git, VS Code, Claude Desktop on Windows
+4. Tools — Claude Cowork, Claude Code, Google Antigravity, OpenAI Codex, Lovable, Bolt, Replit, v0, Cursor, Windsurf
+5. Building — the build workflow, prompting techniques, three projects (web app, AI agent, game), mobile versions
+6. Levels — five tiers (L1 Toy, L2 Personal, L3 Shared, L4 SaaS, L5 Production) with concrete projects at each
+7. Ship & Beyond — deploying, debugging, costs, pitfalls, 30-day plan
+
+# Tone & format
+- Conversational. Short paragraphs.
+- Use occasional **bold** for emphasis on key terms.
+- Code blocks for code or commands (with the language hint when useful).
+- When suggesting a project, frame it at a specific level (L1–L5).
+- When relevant, mention which part/chapter of the guide covers a topic so the reader can dive deeper.
+
+# What you don't do
+- Don't write large blocks of code unless explicitly asked. Stay focused on explanation.
+- Don't make up tool features or pricing — if uncertain, say "I'd verify on their docs."
+- Don't be preachy about safety unless directly relevant.
+
+The reader is on Windows, wants to build web apps with logins/databases, AI agents, and games. Tailor examples to those interests.`;
+
+const CHAT_KEY = 'vc_chat_key';
+const CHAT_PROVIDER = 'vc_chat_provider';
+const CHAT_HISTORY = 'vc_chat_history';
+
+let chatProvider = localStorage.getItem(CHAT_PROVIDER) || 'gemini';
+let chatApiKey = localStorage.getItem(CHAT_KEY) || '';
+let chatHistory = [];
+
+try {
+  chatHistory = JSON.parse(localStorage.getItem(CHAT_HISTORY) || '[]');
+} catch (e) { chatHistory = []; }
+
+const elSetup = document.getElementById('chat-setup');
+const elActive = document.getElementById('chat-active');
+const elMessages = document.getElementById('chat-messages');
+const elInput = document.getElementById('chat-input');
+const elSend = document.getElementById('chat-send');
+const elKeyInput = document.getElementById('api-key-input');
+const elKeyHelp = document.getElementById('key-help');
+const elStartBtn = document.getElementById('start-chat-btn');
+const elProviderLabel = document.getElementById('provider-label');
+const elClearBtn = document.getElementById('clear-history-btn');
+const elResetKeyBtn = document.getElementById('reset-key-btn');
+const elSuggestions = document.getElementById('chat-suggestions');
+const providerButtons = document.querySelectorAll('.provider-pick button');
+
+function updateProviderUI() {
+  providerButtons.forEach(b => {
+    b.classList.toggle('selected', b.dataset.provider === chatProvider);
+  });
+  if (chatProvider === 'gemini') {
+    elKeyHelp.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. Gemini\'s free tier gives 1,500 messages per day.';
+    elKeyInput.placeholder = 'AIza...';
+    elProviderLabel.textContent = 'Powered by Google Gemini · Free tier';
+  } else {
+    elKeyHelp.innerHTML = 'Get one at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>. Requires adding $5 of credits.';
+    elKeyInput.placeholder = 'sk-...';
+    elProviderLabel.textContent = 'Powered by OpenAI';
+  }
+}
+
+providerButtons.forEach(b => {
+  b.addEventListener('click', () => {
+    chatProvider = b.dataset.provider;
+    localStorage.setItem(CHAT_PROVIDER, chatProvider);
+    updateProviderUI();
+  });
+});
+
+function showSetup() {
+  elSetup.style.display = 'flex';
+  elActive.style.display = 'none';
+}
+function showActive() {
+  elSetup.style.display = 'none';
+  elActive.style.display = 'flex';
+  renderMessages();
+  elInput.focus();
+}
+
+elStartBtn.addEventListener('click', () => {
+  const key = elKeyInput.value.trim();
+  if (!key) { return; }
+  chatApiKey = key;
+  localStorage.setItem(CHAT_KEY, key);
+  elKeyInput.value = '';
+  showActive();
+});
+elKeyInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') elStartBtn.click();
+});
+
+elResetKeyBtn.addEventListener('click', () => {
+  if (!confirm('Clear your saved API key? You\'ll need to paste it again to chat.')) return;
+  chatApiKey = '';
+  localStorage.removeItem(CHAT_KEY);
+  showSetup();
+});
+
+elClearBtn.addEventListener('click', () => {
+  if (!confirm('Clear the chat history?')) return;
+  chatHistory = [];
+  localStorage.removeItem(CHAT_HISTORY);
+  renderMessages();
+});
+
+// Minimal markdown renderer for assistant messages
+function renderMarkdown(text) {
+  // escape HTML first
+  let s = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // code blocks ```lang\n...```
+  s = s.replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) =>
+    `<pre><code>${code.trim()}</code></pre>`);
+  // inline code
+  s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  // bold
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // headings (#, ##, ###)
+  s = s.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+  s = s.replace(/^## (.+)$/gm, '<h4>$1</h4>');
+  s = s.replace(/^# (.+)$/gm, '<h4>$1</h4>');
+  // bullets
+  s = s.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+  s = s.replace(/(<li>[\s\S]*?<\/li>)/g, m => '<ul>' + m + '</ul>');
+  s = s.replace(/<\/ul>\s*<ul>/g, '');
+  // paragraphs (double-newline split)
+  const parts = s.split(/\n\n+/);
+  return parts.map(p => {
+    if (p.startsWith('<pre>') || p.startsWith('<ul>') || p.startsWith('<h4>')) return p;
+    return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('');
+}
+
+function renderMessages() {
+  if (!elMessages) return;
+  if (chatHistory.length === 0) {
+    elMessages.innerHTML = '<div class="msg assistant"><div class="msg-role">Tutor</div><div class="msg-body"><p>Hi — I\'m here to help you work through the guide. Ask me anything: a concept that didn\'t click, a project to try at your current level, why your AI is doing something weird, how a tool works under the hood, anything.</p><p>Pick one of the suggestions below to start, or just type your question.</p></div></div>';
+    return;
+  }
+  elMessages.innerHTML = chatHistory.map(m => {
+    const body = m.role === 'assistant' ? renderMarkdown(m.content) : '<p>' + m.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</p>';
+    const role = m.role === 'assistant' ? 'Tutor' : 'You';
+    return `<div class="msg ${m.role}"><div class="msg-role">${role}</div><div class="msg-body">${body}</div></div>`;
+  }).join('');
+  elMessages.scrollTop = elMessages.scrollHeight;
+}
+
+function showThinking() {
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.id = 'thinking-msg';
+  div.innerHTML = '<div class="msg-role">Tutor</div><div class="msg-body"><div class="msg-thinking"><span></span><span></span><span></span></div></div>';
+  elMessages.appendChild(div);
+  elMessages.scrollTop = elMessages.scrollHeight;
+}
+function removeThinking() {
+  const t = document.getElementById('thinking-msg');
+  if (t) t.remove();
+}
+
+async function callGemini(messages) {
+  // Gemini uses "user" / "model" instead of "user" / "assistant"
+  const contents = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
+
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': chatApiKey
+    },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: contents,
+      generationConfig: {
+        maxOutputTokens: 1500,
+        temperature: 0.7
+      }
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('Gemini API error (' + res.status + '): ' + err);
+  }
+  const data = await res.json();
+  // Gemini response structure: candidates[0].content.parts[].text
+  const candidate = data.candidates && data.candidates[0];
+  if (!candidate || !candidate.content || !candidate.content.parts) {
+    throw new Error('Gemini returned no content. Full response: ' + JSON.stringify(data).slice(0, 500));
+  }
+  return candidate.content.parts.map(p => p.text || '').join('');
+}
+
+async function callOpenAI(messages) {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + chatApiKey
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      max_tokens: 1500,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...messages.map(m => ({ role: m.role, content: m.content }))
+      ]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('OpenAI API error (' + res.status + '): ' + err);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+async function sendMessage(text) {
+  if (!text || !chatApiKey) return;
+  // add user message
+  chatHistory.push({ role: 'user', content: text });
+  renderMessages();
+  localStorage.setItem(CHAT_HISTORY, JSON.stringify(chatHistory));
+
+  // disable input while thinking
+  elInput.disabled = true;
+  elSend.disabled = true;
+  showThinking();
+
+  try {
+    // keep last ~10 messages so context doesn't balloon
+    const recent = chatHistory.slice(-10);
+    const reply = chatProvider === 'gemini'
+      ? await callGemini(recent)
+      : await callOpenAI(recent);
+
+    removeThinking();
+    chatHistory.push({ role: 'assistant', content: reply });
+    localStorage.setItem(CHAT_HISTORY, JSON.stringify(chatHistory));
+    renderMessages();
+  } catch (e) {
+    removeThinking();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'msg error';
+    errDiv.innerHTML = '<div class="msg-role">Error</div><div class="msg-body"><p>' +
+      e.message.replace(/</g, '&lt;') +
+      '</p><p style="margin-top:8px;font-size:13px;">Common causes: invalid key, expired key, no credits left, wrong provider selected, or rate limit hit. Check the key with "Change key" below.</p></div>';
+    elMessages.appendChild(errDiv);
+    elMessages.scrollTop = elMessages.scrollHeight;
+  } finally {
+    elInput.disabled = false;
+    elSend.disabled = false;
+    elInput.focus();
+  }
+}
+
+elSend.addEventListener('click', () => {
+  const text = elInput.value.trim();
+  if (!text) return;
+  elInput.value = '';
+  elInput.style.height = 'auto';
+  sendMessage(text);
+});
+elInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    elSend.click();
+  }
+});
+// auto-grow textarea
+elInput.addEventListener('input', () => {
+  elInput.style.height = 'auto';
+  elInput.style.height = Math.min(elInput.scrollHeight, 200) + 'px';
+});
+
+// suggestion chips
+elSuggestions.addEventListener('click', e => {
+  if (e.target.classList.contains('suggestion-chip')) {
+    sendMessage(e.target.textContent);
+  }
+});
+
+// initial state
+updateProviderUI();
+if (chatApiKey) {
+  showActive();
+} else {
+  showSetup();
+}
 </script>
 
 </body>

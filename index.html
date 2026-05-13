@@ -932,20 +932,22 @@ pre .fn { color: #e8b87d; }
 }
 .chat-setup-card .provider-pick {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 .chat-setup-card .provider-pick button {
-  flex: 1;
-  padding: 12px;
+  flex: 1 1 130px;
+  padding: 11px 8px;
   background: var(--paper);
   border: 1.5px solid var(--line);
   font-family: 'Fraunces', serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.15s;
   color: var(--ink);
+  white-space: nowrap;
 }
 .chat-setup-card .provider-pick button:hover {
   background: var(--cream-dark);
@@ -954,6 +956,18 @@ pre .fn { color: #e8b87d; }
   background: var(--ink);
   color: var(--paper);
   border-color: var(--ink);
+}
+.chat-setup-card .provider-pick button .key-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--olive);
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.chat-setup-card .provider-pick button.selected .key-dot {
+  background: #a8c181;
 }
 .chat-setup-card input[type="password"],
 .chat-setup-card input[type="text"] {
@@ -3109,7 +3123,8 @@ git push</code></pre>
       <label>Pick a provider</label>
       <div class="provider-pick">
         <button data-provider="gemini" class="selected">Google Gemini · Free</button>
-        <button data-provider="openai">OpenAI (GPT)</button>
+        <button data-provider="anthropic">Anthropic Claude</button>
+        <button data-provider="openai">OpenAI GPT</button>
       </div>
 
       <label for="api-key-input">API key</label>
@@ -3386,12 +3401,12 @@ The guide has 7 parts:
 
 The reader is on Windows, wants to build web apps with logins/databases, AI agents, and games. Tailor examples to those interests.`;
 
-const CHAT_KEY = 'vc_chat_key';
+const CHAT_KEY_PREFIX = 'vc_chat_key_'; // suffixed with provider name
 const CHAT_PROVIDER = 'vc_chat_provider';
 const CHAT_HISTORY = 'vc_chat_history';
 
 let chatProvider = localStorage.getItem(CHAT_PROVIDER) || 'gemini';
-let chatApiKey = localStorage.getItem(CHAT_KEY) || '';
+let chatApiKey = localStorage.getItem(CHAT_KEY_PREFIX + chatProvider) || '';
 let chatHistory = [];
 
 try {
@@ -3415,13 +3430,28 @@ const providerButtons = document.querySelectorAll('.provider-pick button');
 function updateProviderUI() {
   providerButtons.forEach(b => {
     b.classList.toggle('selected', b.dataset.provider === chatProvider);
+    // show a small dot on buttons with saved keys
+    const hasKey = !!localStorage.getItem(CHAT_KEY_PREFIX + b.dataset.provider);
+    if (hasKey && !b.querySelector('.key-dot')) {
+      const dot = document.createElement('span');
+      dot.className = 'key-dot';
+      dot.title = 'Key saved';
+      b.appendChild(dot);
+    } else if (!hasKey) {
+      const existing = b.querySelector('.key-dot');
+      if (existing) existing.remove();
+    }
   });
   if (chatProvider === 'gemini') {
-    elKeyHelp.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. Gemini\'s free tier gives 1,500 messages per day.';
+    elKeyHelp.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. Free tier: 1,500 messages per day, no card required.';
     elKeyInput.placeholder = 'AIza...';
     elProviderLabel.textContent = 'Powered by Google Gemini · Free tier';
+  } else if (chatProvider === 'anthropic') {
+    elKeyHelp.innerHTML = 'Get one at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>. New accounts get free trial credits; after that, pay-per-use.';
+    elKeyInput.placeholder = 'sk-ant-...';
+    elProviderLabel.textContent = 'Powered by Anthropic Claude';
   } else {
-    elKeyHelp.innerHTML = 'Get one at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>. Requires adding $5 of credits.';
+    elKeyHelp.innerHTML = 'Get one at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>. Requires adding $5 of credits to your account.';
     elKeyInput.placeholder = 'sk-...';
     elProviderLabel.textContent = 'Powered by OpenAI';
   }
@@ -3431,7 +3461,16 @@ providerButtons.forEach(b => {
   b.addEventListener('click', () => {
     chatProvider = b.dataset.provider;
     localStorage.setItem(CHAT_PROVIDER, chatProvider);
+    // load saved key for this provider (or empty if none yet)
+    chatApiKey = localStorage.getItem(CHAT_KEY_PREFIX + chatProvider) || '';
     updateProviderUI();
+    // if user is on setup screen and switched provider, swap to that provider's chat if a key already exists
+    if (elSetup.style.display !== 'none') {
+      if (chatApiKey) showActive();
+    } else {
+      // already chatting — if newly-picked provider has no key, send back to setup
+      if (!chatApiKey) showSetup();
+    }
   });
 });
 
@@ -3450,7 +3489,7 @@ elStartBtn.addEventListener('click', () => {
   const key = elKeyInput.value.trim();
   if (!key) { return; }
   chatApiKey = key;
-  localStorage.setItem(CHAT_KEY, key);
+  localStorage.setItem(CHAT_KEY_PREFIX + chatProvider, key);
   elKeyInput.value = '';
   showActive();
 });
@@ -3459,9 +3498,9 @@ elKeyInput.addEventListener('keydown', e => {
 });
 
 elResetKeyBtn.addEventListener('click', () => {
-  if (!confirm('Clear your saved API key? You\'ll need to paste it again to chat.')) return;
+  if (!confirm('Clear your saved API key for ' + chatProvider + '?\n\nYou\'ll need to paste it again to chat with this provider. Other providers\' keys are unaffected.')) return;
   chatApiKey = '';
-  localStorage.removeItem(CHAT_KEY);
+  localStorage.removeItem(CHAT_KEY_PREFIX + chatProvider);
   showSetup();
 });
 
@@ -3566,6 +3605,30 @@ async function callGemini(messages) {
   return candidate.content.parts.map(p => p.text || '').join('');
 }
 
+async function callAnthropic(messages) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': chatApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 1500,
+      system: SYSTEM_PROMPT,
+      messages: messages.map(m => ({ role: m.role, content: m.content }))
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('Anthropic API error (' + res.status + '): ' + err);
+  }
+  const data = await res.json();
+  return data.content.map(c => c.text || '').join('');
+}
+
 async function callOpenAI(messages) {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -3605,9 +3668,10 @@ async function sendMessage(text) {
   try {
     // keep last ~10 messages so context doesn't balloon
     const recent = chatHistory.slice(-10);
-    const reply = chatProvider === 'gemini'
-      ? await callGemini(recent)
-      : await callOpenAI(recent);
+    let reply;
+    if (chatProvider === 'gemini')         reply = await callGemini(recent);
+    else if (chatProvider === 'anthropic') reply = await callAnthropic(recent);
+    else                                   reply = await callOpenAI(recent);
 
     removeThinking();
     chatHistory.push({ role: 'assistant', content: reply });
